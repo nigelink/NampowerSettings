@@ -693,6 +693,46 @@ if Nampower:HasMinimumVersion(2, 8, 6) then
 	}
 end
 
+if Nampower:HasMinimumVersion(2, 11, 0) then
+	Nampower.cmdtable.args.NP_SpamProtectionEnabled = {
+		type = "toggle",
+		name = L["Spam Protection"],
+		desc = L["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"],
+		order = 120,
+		get = function()
+			return GetCVar("NP_SpamProtectionEnabled") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_SpamProtectionEnabled = v
+			if v == true then
+				SetCVar("NP_SpamProtectionEnabled", "1")
+			else
+				SetCVar("NP_SpamProtectionEnabled", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.NP_PreventRightClickPvPAttack = {
+		type = "toggle",
+		name = L["Prevent Right Click PvP Attack"],
+		desc = L["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"],
+		order = 130,
+		get = function()
+			return GetCVar("NP_PreventRightClickPvPAttack") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_PreventRightClickPvPAttack = v
+			if v == true then
+				SetCVar("NP_PreventRightClickPvPAttack", "1")
+			else
+				SetCVar("NP_PreventRightClickPvPAttack", "0")
+			end
+		end,
+	}
+else
+	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."])
+end
+
 local deuce = Nampower:NewModule("Nampower Options Menu")
 deuce.hasFuBar = IsAddOnLoaded("FuBar") and FuBar
 deuce.consoleCmd = not deuce.hasFuBar

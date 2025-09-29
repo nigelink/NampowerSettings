@@ -103,6 +103,14 @@ L:RegisterTranslations("enUS", function()
 
         ["Nameplate Distance"] = true,
         ["The distance in yards to show nameplates"] = true,
+
+        ["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."] = true,
+
+        ["Spam Protection"] = true,
+        ["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"] = true,
+
+        ["Prevent Right Click PvP Attack"] = true,
+        ["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"] = true,
     }
 end)
 
@@ -209,5 +217,13 @@ L:RegisterTranslations("zhCN", function()
 
         ["Nameplate Distance"] = "姓名板显示距离",
         ["The distance in yards to show nameplates"] = "显示姓名板的最大距离（码）",
+
+        ["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."] = "|cffffcc00Nampower dll 有更新可用。|cffffcc00 更新前部分设置可能隐藏。",
+
+        ["Spam Protection"] = "防连点保护",
+        ["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"] = "是否启用防连点保护功能，避免在等待服务器响应期间连点施法导致的问题",
+
+        ["Prevent Right Click PvP Attack"] = "阻止右键PvP攻击",
+        ["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"] = "是否防止右键点击PvP标记玩家以避免误触发PvP攻击",
     }
 end)

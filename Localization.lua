@@ -47,11 +47,17 @@ L:RegisterTranslations("enUS", function()
         ["Cooldown Queue Window (ms)"] = true,
         ["The window in ms before a spell coming off cooldown finishes where the next will get queued"] = true,
 
+        ["Cast Options"] = true,
+        ["Options for controlling casting behavior"] = true,
+
         ["Advanced options"] = true,
         ["Collection of various advanced options"] = true,
 
         ["Double Cast to End Channel Early"] = true,
         ["Whether to allow double casting a spell within 350ms to end channeling on the next tick.  Takes into account your ChannelLatencyReductionPercentage."] = true,
+
+        ["Quickcast Targeting Spells on Double Cast"] = true,
+        ["Allows casting targeting spells by attempting to cast them twice as opposed to the default client behavior which cancels the targeting indicator"] = true,
 
         ["Interrupt Channels Outside Queue Window"] = true,
         ["Whether to allow interrupting channels (the original client behavior) when trying to cast a spell outside the channeling queue window"] = true,
@@ -161,11 +167,17 @@ L:RegisterTranslations("zhCN", function()
         ["Cooldown Queue Window (ms)"] = "冷却结束队列窗口（ms）",
         ["The window in ms before a spell coming off cooldown finishes where the next will get queued"] = "法术冷却结束前多少毫秒（ms）可将该法术加入队列",
 
+        ["Cast Options"] = "施法选项",
+        ["Options for controlling casting behavior"] = "控制施法行为的选项",
+
         ["Advanced options"] = "高级选项",
         ["Collection of various advanced options"] = "各类高级选项集合",
 
         ["Double Cast to End Channel Early"] = "双重施法提前结束引导",
         ["Whether to allow double casting a spell within 350ms to end channeling on the next tick.  Takes into account your ChannelLatencyReductionPercentage."] = "是否允许350毫秒内双重施法以在下一个伤害周期提前结束引导。受引导延迟削减比例影响。",
+
+        ["Quickcast Targeting Spells on Double Cast"] = "双重施法快速施放目标区域法术",
+        ["Allows casting targeting spells by attempting to cast them twice as opposed to the default client behavior which cancels the targeting indicator"] = "允许通过双次尝试施法来释放目标区域法术，而非默认客户端行为（取消目标指示器）",
 
         ["Interrupt Channels Outside Queue Window"] = "队列窗口外允许打断引导",
         ["Whether to allow interrupting channels (the original client behavior) when trying to cast a spell outside the channeling queue window"] = "在引导法术队列窗口外尝试施法时，是否允许打断引导（默认客户端行为）",

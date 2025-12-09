@@ -22,3 +22,4 @@ libs\FuBarPlugin\FuBarPlugin-2.0.lua
 
 Localization.lua
 settings.lua
+helper.lua

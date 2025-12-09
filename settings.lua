@@ -1,8 +1,7 @@
 local L = AceLibrary("AceLocale-2.2"):new("NampowerSettings")
 
 -- No Nampower v2, no need for settings
-local has_v2_nampower = pcall(GetCVar, "NP_QueueCastTimeSpells")
-if not has_v2_nampower then
+if not GetNampowerVersion then
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Nampower v2|cffffaaaa not present hiding settings."])
 	return
 end
@@ -394,17 +393,34 @@ Nampower.cmdtable = {
 			name = " ",
 			order = 50,
 		},
-		advanced_options = {
+		cast_options = {
 			type = "group",
-			name = L["Advanced options"],
-			desc = L["Collection of various advanced options"],
-			order = 60,
+			name = L["Cast Options"],
+			desc = L["Options for controlling casting behavior"],
+			order = 55,
 			args = {
+				NP_QuickcastTargetingSpells = {
+					type = "toggle",
+					name = L["Quickcast Targeting Spells"],
+					desc = L["Whether to enable quick casting for ALL spells with terrain targeting"],
+					order = 5,
+					get = function()
+						return GetCVar("NP_QuickcastTargetingSpells") == "1"
+					end,
+					set = function(v)
+						Nampower.db.profile.NP_QuickcastTargetingSpells = v
+						if v == true then
+							SetCVar("NP_QuickcastTargetingSpells", "1")
+						else
+							SetCVar("NP_QuickcastTargetingSpells", "0")
+						end
+					end,
+				},
 				NP_DoubleCastToEndChannelEarly = {
 					type = "toggle",
 					name = L["Double Cast to End Channel Early"],
 					desc = L["Whether to allow double casting a spell within 350ms to end channeling on the next tick.  Takes into account your ChannelLatencyReductionPercentage."],
-					order = 33,
+					order = 15,
 					get = function()
 						return GetCVar("NP_DoubleCastToEndChannelEarly") == "1"
 					end,
@@ -417,6 +433,19 @@ Nampower.cmdtable = {
 						end
 					end,
 				},
+			},
+		},
+		spacerc2 = {
+			type = "header",
+			name = " ",
+			order = 58,
+		},
+		advanced_options = {
+			type = "group",
+			name = L["Advanced options"],
+			desc = L["Collection of various advanced options"],
+			order = 60,
+			args = {
 				NP_InterruptChannelsOutsideQueueWindow = {
 					type = "toggle",
 					name = L["Interrupt Channels Outside Queue Window"],
@@ -448,23 +477,6 @@ Nampower.cmdtable = {
 							SetCVar("NP_RetryServerRejectedSpells", "1")
 						else
 							SetCVar("NP_RetryServerRejectedSpells", "0")
-						end
-					end,
-				},
-				NP_QuickcastTargetingSpells = {
-					type = "toggle",
-					name = L["Quickcast Targeting Spells"],
-					desc = L["Whether to enable quick casting for ALL spells with terrain targeting"],
-					order = 105,
-					get = function()
-						return GetCVar("NP_QuickcastTargetingSpells") == "1"
-					end,
-					set = function(v)
-						Nampower.db.profile.NP_QuickcastTargetingSpells = v
-						if v == true then
-							SetCVar("NP_QuickcastTargetingSpells", "1")
-						else
-							SetCVar("NP_QuickcastTargetingSpells", "0")
 						end
 					end,
 				},
@@ -649,27 +661,10 @@ Nampower.cmdtable = {
 				},
 			},
 		},
-		spacer6 = {
+		spacerd = {
 			type = "header",
 			name = " ",
 			order = 90,
-		},
-		NP_PreventRightClickTargetChange = {
-			type = "toggle",
-			name = L["Prevent Right Click Target Change"],
-			desc = L["Whether to prevent right-clicking from changing your current target when in combat.  If you don't have a target right click will still change your target even with this on.  This is mainly to prevent accidentally changing targets in combat when trying to adjust your camera."],
-			order = 100,
-			get = function()
-				return GetCVar("NP_PreventRightClickTargetChange") == "1"
-			end,
-			set = function(v)
-				Nampower.db.profile.NP_PreventRightClickTargetChange = v
-				if v == true then
-					SetCVar("NP_PreventRightClickTargetChange", "1")
-				else
-					SetCVar("NP_PreventRightClickTargetChange", "0")
-				end
-			end,
 		},
 	},
 }
@@ -693,12 +688,30 @@ if Nampower:HasMinimumVersion(2, 8, 6) then
 	}
 end
 
+Nampower.cmdtable.args.advanced_options.args.NP_PreventRightClickTargetChange = {
+	type = "toggle",
+	name = L["Prevent Right Click Target Change"],
+	desc = L["Whether to prevent right-clicking from changing your current target when in combat.  If you don't have a target right click will still change your target even with this on.  This is mainly to prevent accidentally changing targets in combat when trying to adjust your camera."],
+	order = 140,
+	get = function()
+		return GetCVar("NP_PreventRightClickTargetChange") == "1"
+	end,
+	set = function(v)
+		Nampower.db.profile.NP_PreventRightClickTargetChange = v
+		if v == true then
+			SetCVar("NP_PreventRightClickTargetChange", "1")
+		else
+			SetCVar("NP_PreventRightClickTargetChange", "0")
+		end
+	end,
+}
+
 if Nampower:HasMinimumVersion(2, 11, 0) then
-	Nampower.cmdtable.args.NP_SpamProtectionEnabled = {
+	Nampower.cmdtable.args.advanced_options.args.NP_SpamProtectionEnabled = {
 		type = "toggle",
 		name = L["Spam Protection"],
 		desc = L["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"],
-		order = 120,
+		order = 135,
 		get = function()
 			return GetCVar("NP_SpamProtectionEnabled") == "1"
 		end,
@@ -712,11 +725,11 @@ if Nampower:HasMinimumVersion(2, 11, 0) then
 		end,
 	}
 
-	Nampower.cmdtable.args.NP_PreventRightClickPvPAttack = {
+	Nampower.cmdtable.args.advanced_options.args.NP_PreventRightClickPvPAttack = {
 		type = "toggle",
 		name = L["Prevent Right Click PvP Attack"],
 		desc = L["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"],
-		order = 130,
+		order = 145,
 		get = function()
 			return GetCVar("NP_PreventRightClickPvPAttack") == "1"
 		end,
@@ -731,6 +744,26 @@ if Nampower:HasMinimumVersion(2, 11, 0) then
 	}
 else
 	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."])
+end
+
+if Nampower:HasMinimumVersion(2, 15, 0) then
+	Nampower.cmdtable.args.cast_options.args.NP_QuickcastOnDoubleCast = {
+		type = "toggle",
+		name = L["Quickcast Targeting Spells on Double Cast"],
+		desc = L["Allows casting targeting spells by attempting to cast them twice as opposed to the default client behavior which cancels the targeting indicator"],
+		order = 10,
+		get = function()
+			return GetCVar("NP_QuickcastOnDoubleCast") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_QuickcastOnDoubleCast = v
+			if v == true then
+				SetCVar("NP_QuickcastOnDoubleCast", "1")
+			else
+				SetCVar("NP_QuickcastOnDoubleCast", "0")
+			end
+		end,
+	}
 end
 
 local deuce = Nampower:NewModule("Nampower Options Menu")

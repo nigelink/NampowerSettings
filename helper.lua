@@ -108,3 +108,40 @@ function PrintSpellData(spellId)
 		print("No spell data available")
 	end
 end
+
+if not Nampower:HasMinimumVersion(2, 16, 0) then
+	return
+end
+
+function PrintItemLocation(itemNameOrId)
+	local bagIndex, slot = FindPlayerItemSlot(itemNameOrId)
+	print(tostring(bagIndex) .. " " .. tostring(slot))
+end
+
+function PrintEquippedItems()
+	local target = "player"
+	if UnitExists("target") then
+		target = "target"
+	end
+	local data = GetEquippedItems(target)
+	PrintTable(data)
+end
+
+function LogEquippedItems()
+	local target = "player"
+	if UnitExists("target") then
+		target = "target"
+	end
+	local data = GetEquippedItems(target)
+	PrintTableToCombatLog(data)
+end
+
+function PrintBagItems()
+	local data = GetBagItems()
+	PrintTable(data)
+end
+
+function LogBagItems()
+	local data = GetBagItems()
+	PrintTableToCombatLog(data)
+end

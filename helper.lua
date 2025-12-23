@@ -145,3 +145,42 @@ function LogBagItems()
 	local data = GetBagItems()
 	PrintTableToCombatLog(data)
 end
+
+if not Nampower:HasMinimumVersion(2, 17, 0) then
+	return
+end
+
+function PrintCastInfo()
+	local data = GetCastInfo()
+	if data then
+		PrintTable(data)
+	end
+end
+
+function PrintSpellCooldown(spellId)
+	local data = GetSpellIdCooldown(spellId)
+	if data then
+		PrintTable(data)
+	end
+end
+
+function PrintItemCooldown(itemId)
+	local data = GetItemIdCooldown(itemId)
+	if data then
+		PrintTable(data)
+	end
+end
+
+function PrintTrinketCooldown(trinketId)
+	local data = GetTrinketCooldown(trinketId)
+	if data then
+		PrintTable(data)
+	end
+end
+
+function PrintTrinkets()
+	local data = GetTrinkets(1)
+	if data then
+		PrintTable(data)
+	end
+end

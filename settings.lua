@@ -35,8 +35,8 @@ function Nampower:HasMinimumVersion(major, minor, patch)
 end
 
 -- check if they have the latest nampower dll
-if not Nampower:HasMinimumVersion(2, 8, 6) then
-	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Nampower update available.|cffffcc00  Some settings may be hidden until you update.  Replace your existing nampower.dll with the latest from https://gitea.com/avitasia/nampower/releases"])
+if not Nampower:HasMinimumVersion(2, 20, 0) then
+	DEFAULT_CHAT_FRAME:AddMessage(L["update available"])
 end
 
 -- setup queued spell frame
@@ -118,6 +118,12 @@ function Nampower:SavePerCharacterSettings()
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
+
+	for settingKey, settingData in pairs(Nampower.cmdtable.args.qol_options.args) do
+		if string.find(settingKey, "NP_") == 1 then
+			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
+		end
+	end
 end
 
 function Nampower:ApplySavedSettings()
@@ -140,6 +146,15 @@ function Nampower:ApplySavedSettings()
 	end
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args) do
+		-- only apply settings that are prefixed with NP_
+		if string.find(settingKey, "NP_") == 1 then
+			if Nampower.db.profile[settingKey]~= nil then
+				settingData.set(Nampower.db.profile[settingKey])
+			end
+		end
+	end
+
+	for settingKey, settingData in pairs(Nampower.cmdtable.args.qol_options.args) do
 		-- only apply settings that are prefixed with NP_
 		if string.find(settingKey, "NP_") == 1 then
 			if Nampower.db.profile[settingKey]~= nil then
@@ -440,11 +455,24 @@ Nampower.cmdtable = {
 			name = " ",
 			order = 58,
 		},
+		qol_options = {
+			type = "group",
+			name = L["QOL Options"],
+			desc = L["Quality of life options to prevent common issues"],
+			order = 59,
+			args = {
+			},
+		},
+		spacerc3 = {
+			type = "header",
+			name = " ",
+			order = 60,
+		},
 		advanced_options = {
 			type = "group",
 			name = L["Advanced options"],
 			desc = L["Collection of various advanced options"],
-			order = 60,
+			order = 65,
 			args = {
 				NP_InterruptChannelsOutsideQueueWindow = {
 					type = "toggle",
@@ -583,13 +611,13 @@ Nampower.cmdtable = {
 		spacerc = {
 			type = "header",
 			name = " ",
-			order = 70,
+			order = 75,
 		},
 		queued_spell_options = {
 			type = "group",
 			name = L["Queued Spell Display Options"],
 			desc = L["Options for displaying an icon for the queued spell"],
-			order = 80,
+			order = 85,
 			args = {
 				enabled = {
 					type = "toggle",
@@ -664,7 +692,7 @@ Nampower.cmdtable = {
 		spacerd = {
 			type = "header",
 			name = " ",
-			order = 90,
+			order = 95,
 		},
 	},
 }
@@ -674,7 +702,7 @@ if Nampower:HasMinimumVersion(2, 8, 6) then
 		type = "range",
 		name = L["Nameplate Distance"],
 		desc = L["The distance in yards to show nameplates"],
-		order = 110,
+		order = 115,
 		min = 5,
 		max = 200,
 		step = 1,
@@ -688,11 +716,11 @@ if Nampower:HasMinimumVersion(2, 8, 6) then
 	}
 end
 
-Nampower.cmdtable.args.advanced_options.args.NP_PreventRightClickTargetChange = {
+Nampower.cmdtable.args.qol_options.args.NP_PreventRightClickTargetChange = {
 	type = "toggle",
 	name = L["Prevent Right Click Target Change"],
 	desc = L["Whether to prevent right-clicking from changing your current target when in combat.  If you don't have a target right click will still change your target even with this on.  This is mainly to prevent accidentally changing targets in combat when trying to adjust your camera."],
-	order = 140,
+	order = 5,
 	get = function()
 		return GetCVar("NP_PreventRightClickTargetChange") == "1"
 	end,
@@ -707,11 +735,11 @@ Nampower.cmdtable.args.advanced_options.args.NP_PreventRightClickTargetChange = 
 }
 
 if Nampower:HasMinimumVersion(2, 11, 0) then
-	Nampower.cmdtable.args.advanced_options.args.NP_SpamProtectionEnabled = {
+	Nampower.cmdtable.args.qol_options.args.NP_SpamProtectionEnabled = {
 		type = "toggle",
 		name = L["Spam Protection"],
 		desc = L["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"],
-		order = 135,
+		order = 10,
 		get = function()
 			return GetCVar("NP_SpamProtectionEnabled") == "1"
 		end,
@@ -725,11 +753,11 @@ if Nampower:HasMinimumVersion(2, 11, 0) then
 		end,
 	}
 
-	Nampower.cmdtable.args.advanced_options.args.NP_PreventRightClickPvPAttack = {
+	Nampower.cmdtable.args.qol_options.args.NP_PreventRightClickPvPAttack = {
 		type = "toggle",
 		name = L["Prevent Right Click PvP Attack"],
 		desc = L["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"],
-		order = 145,
+		order = 15,
 		get = function()
 			return GetCVar("NP_PreventRightClickPvPAttack") == "1"
 		end,
@@ -743,7 +771,7 @@ if Nampower:HasMinimumVersion(2, 11, 0) then
 		end,
 	}
 else
-	DEFAULT_CHAT_FRAME:AddMessage(L["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."])
+	DEFAULT_CHAT_FRAME:AddMessage(L["update available"])
 end
 
 if Nampower:HasMinimumVersion(2, 15, 0) then
@@ -761,6 +789,44 @@ if Nampower:HasMinimumVersion(2, 15, 0) then
 				SetCVar("NP_QuickcastOnDoubleCast", "1")
 			else
 				SetCVar("NP_QuickcastOnDoubleCast", "0")
+			end
+		end,
+	}
+end
+
+if Nampower:HasMinimumVersion(2, 20, 0) then
+	Nampower.cmdtable.args.qol_options.args.NP_PreventMountingWhenBuffCapped = {
+		type = "toggle",
+		name = L["Prevent Mounting When Buff Capped"],
+		desc = L["Whether to prevent mounting when you have 32 buffs (buff capped) and are not already mounted. This prevents the issue where you mount but cannot dismount because the mount aura fails to apply due to the buff cap. When blocked, displays an error message."],
+		order = 20,
+		get = function()
+			return GetCVar("NP_PreventMountingWhenBuffCapped") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_PreventMountingWhenBuffCapped = v
+			if v == true then
+				SetCVar("NP_PreventMountingWhenBuffCapped", "1")
+			else
+				SetCVar("NP_PreventMountingWhenBuffCapped", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableAuraCastEvents = {
+		type = "toggle",
+		name = L["Enable Aura Cast Events"],
+		desc = L["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."],
+		order = 155,
+		get = function()
+			return GetCVar("NP_EnableAuraCastEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableAuraCastEvents = v
+			if v == true then
+				SetCVar("NP_EnableAuraCastEvents", "1")
+			else
+				SetCVar("NP_EnableAuraCastEvents", "0")
 			end
 		end,
 	}

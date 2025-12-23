@@ -4,7 +4,7 @@ L:RegisterTranslations("enUS", function()
     return {
         ["|cffffcc00Nampower v2|cffffaaaa not present hiding settings."] = true,
 
-        ["|cffffcc00Nampower update available.|cffffcc00  Some settings may be hidden until you update.  Replace your existing nampower.dll with the latest from https://gitea.com/avitasia/nampower/releases"] = true,
+        ["update available"] = "|cffffcc00Nampower update v2.20.0 available.|cffffcc00  Some settings may be hidden until you update.  Replace your existing nampower.dll with the latest from https://gitea.com/avitasia/nampower/releases",
 
         ["Superwow required to display queued spells."] = true,
 
@@ -49,6 +49,9 @@ L:RegisterTranslations("enUS", function()
 
         ["Cast Options"] = true,
         ["Options for controlling casting behavior"] = true,
+
+        ["QOL Options"] = true,
+        ["Quality of life options to prevent common issues"] = true,
 
         ["Advanced options"] = true,
         ["Collection of various advanced options"] = true,
@@ -110,13 +113,17 @@ L:RegisterTranslations("enUS", function()
         ["Nameplate Distance"] = true,
         ["The distance in yards to show nameplates"] = true,
 
-        ["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."] = true,
-
         ["Spam Protection"] = true,
         ["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"] = true,
 
         ["Prevent Right Click PvP Attack"] = true,
         ["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"] = true,
+
+        ["Prevent Mounting When Buff Capped"] = true,
+        ["Whether to prevent mounting when you have 32 buffs (buff capped) and are not already mounted. This prevents the issue where you mount but cannot dismount because the mount aura fails to apply due to the buff cap. When blocked, displays an error message."] = true,
+
+        ["Enable Aura Cast Events"] = true,
+        ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = true,
     }
 end)
 
@@ -124,7 +131,7 @@ L:RegisterTranslations("zhCN", function()
     return {
         ["|cffffcc00Nampower v2|cffffaaaa not present hiding settings."] = "|cffffcc00Nampower v2|cffffaaaa 未安装，隐藏设置项。",
 
-        ["|cffffcc00Nampower update available.|cffffcc00  Some settings may be hidden until you update.  Replace your existing nampower.dll with the latest from https://gitea.com/avitasia/nampower/releases"] = "|cffffcc00Nampower 有更新可用。|cffffcc00 更新前部分设置可能隐藏。请从 https://gitea.com/avitasia/nampower/releases 下载最新 nampower.dll 替换当前版本。",
+        ["update available"] = "|cffffcc00Nampower v2.20.0 更新可用。|cffffcc00 更新前部分设置可能隐藏。请从 https://gitea.com/avitasia/nampower/releases 下载最新 nampower.dll 替换当前版本。",
 
         ["Superwow required to display queued spells."] = "需 Superwow 插件显示队列中法术。",
 
@@ -169,6 +176,9 @@ L:RegisterTranslations("zhCN", function()
 
         ["Cast Options"] = "施法选项",
         ["Options for controlling casting behavior"] = "控制施法行为的选项",
+
+        ["QOL Options"] = "便利性选项",
+        ["Quality of life options to prevent common issues"] = "用于防止常见错误的便利性选项",
 
         ["Advanced options"] = "高级选项",
         ["Collection of various advanced options"] = "各类高级选项集合",
@@ -230,12 +240,16 @@ L:RegisterTranslations("zhCN", function()
         ["Nameplate Distance"] = "姓名板显示距离",
         ["The distance in yards to show nameplates"] = "显示姓名板的最大距离（码）",
 
-        ["|cffffcc00Nampower dll update available.|cffffcc00  Some settings may be hidden until you update."] = "|cffffcc00Nampower dll 有更新可用。|cffffcc00 更新前部分设置可能隐藏。",
-
         ["Spam Protection"] = "防连点保护",
         ["Whether to enable spam protection functionality that blocks spamming spells while waiting for the server to respond to your initial cast due to issues spamming can cause"] = "是否启用防连点保护功能，避免在等待服务器响应期间连点施法导致的问题",
 
         ["Prevent Right Click PvP Attack"] = "阻止右键PvP攻击",
         ["Whether to prevent right-clicking on PvP flagged players to avoid accidental PvP attacks"] = "是否防止右键点击PvP标记玩家以避免误触发PvP攻击",
+
+        ["Prevent Mounting When Buff Capped"] = "Buff满时阻止上坐骑",
+        ["Whether to prevent mounting when you have 32 buffs (buff capped) and are not already mounted. This prevents the issue where you mount but cannot dismount because the mount aura fails to apply due to the buff cap. When blocked, displays an error message."] = "当已有32个增益（Buff已满）且未在坐骑状态时，是否阻止上坐骑，以避免坐骑光环因Buff上限无法施加导致无法下马的问题。被阻止时会显示错误提示。",
+
+        ["Enable Aura Cast Events"] = "启用光环施放事件",
+        ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = "是否启用 AURA_CAST_ON_SELF 和 AURA_CAST_ON_OTHER 事件。",
     }
 end)

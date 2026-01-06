@@ -1,3 +1,7 @@
+if not Nampower then
+	return
+end
+
 if not Nampower:HasMinimumVersion(2, 14, 0) then
 	return
 end
@@ -82,6 +86,16 @@ if CombatLogAdd then
 	end
 end
 
+function PrintBuffs(unit)
+  for i = 1, 32 do
+    local texture, stacks, spellId = UnitBuff(unit, i)
+    if not texture then
+      break
+    end
+    print(tostring(i) .. " " .. tostring(spellId))
+  end
+end
+
 function PrintUnitData(unit)
 	local data = GetUnitData(unit)
 	if data then
@@ -144,6 +158,65 @@ end
 function LogBagItems()
 	local data = GetBagItems()
 	PrintTableToCombatLog(data)
+end
+
+function TestBagItems(bagIndex)
+  local items = GetBagItems(bagIndex)
+  local numItemsChecked = 0
+  for slot, itemData in pairs(items) do
+    local itemLink = GetContainerItemLink(bagIndex, slot)
+    if not itemLink then
+      print(tostring(bagIndex) .. " " .. tostring(slot))
+      PrintTable(itemData)
+    end
+    local _, _, itemId = strfind(itemLink, "(%d+):")
+    numItemsChecked = numItemsChecked + 1
+    if (tostring(itemData.itemId) ~= itemId) then
+      print("Item mismatch at " .. tostring(bagIndex) .. " " .. tostring(slot) .. " " .. tostring(itemData.itemId) .. " " .. tostring(itemId))
+      print(itemLink)
+    end
+  end
+  print("checked " .. tostring(numItemsChecked) .. " items")
+end
+
+function TestAllBagItems()
+  local data = GetBagItems()
+  local numItemsChecked = 0
+  for bagIndex, items in pairs(data) do
+    for slot, itemData in pairs(items) do
+      local itemLink = GetContainerItemLink(bagIndex, slot)
+      if not itemLink then
+        print(tostring(bagIndex) .. " " .. tostring(slot))
+        PrintTable(itemData)
+      end
+      local _, _, itemId = strfind(itemLink, "(%d+):")
+      numItemsChecked = numItemsChecked + 1
+      if (tostring(itemData.itemId) ~= itemId) then
+        print("Item mismatch at " .. tostring(bagIndex) .. " " .. tostring(slot) .. " " .. tostring(itemData.itemId) .. " " .. tostring(itemId))
+        print(itemLink)
+      end
+    end
+  end
+  print("checked " .. tostring(numItemsChecked) .. " items")
+end
+
+function TestTrinkets()
+  local data = GetTrinkets()
+  for index, trinketData in pairs(data) do
+    local bagIndex = trinketData.bagIndex
+    local slot = trinketData.slotIndex
+    local itemLink
+    if bagIndex then
+      itemLink = GetContainerItemLink(bagIndex, slot)
+    else
+      itemLink = GetInventoryItemLink("player", slot)
+    end
+    local _, _, itemId = strfind(itemLink, "(%d+):")
+    if (tostring(trinketData.itemId) ~= itemId) then
+      print("Trinket mismatch at " .. tostring(bagIndex) .. " " .. tostring(slot) .. " " .. tostring(itemData.itemId) .. " " .. tostring(itemId))
+      print(itemLink)
+    end
+  end
 end
 
 if not Nampower:HasMinimumVersion(2, 17, 0) then

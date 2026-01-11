@@ -832,6 +832,26 @@ if Nampower:HasMinimumVersion(2, 20, 0) then
 	}
 end
 
+if Nampower:HasMinimumVersion(2, 24, 0) then
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableAutoAttackEvents = {
+		type = "toggle",
+		name = L["Enable Auto Attack Events"],
+		desc = L["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."],
+		order = 160,
+		get = function()
+			return GetCVar("NP_EnableAutoAttackEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableAutoAttackEvents = v
+			if v == true then
+				SetCVar("NP_EnableAutoAttackEvents", "1")
+			else
+				SetCVar("NP_EnableAutoAttackEvents", "0")
+			end
+		end,
+	}
+end
+
 local deuce = Nampower:NewModule("Nampower Options Menu")
 deuce.hasFuBar = IsAddOnLoaded("FuBar") and FuBar
 deuce.consoleCmd = not deuce.hasFuBar

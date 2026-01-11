@@ -124,6 +124,9 @@ L:RegisterTranslations("enUS", function()
 
         ["Enable Aura Cast Events"] = true,
         ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = true,
+
+        ["Enable Auto Attack Events"] = true,
+        ["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."] = true,
     }
 end)
 
@@ -251,5 +254,8 @@ L:RegisterTranslations("zhCN", function()
 
         ["Enable Aura Cast Events"] = "启用光环施放事件",
         ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = "是否启用 AURA_CAST_ON_SELF 和 AURA_CAST_ON_OTHER 事件。",
+
+        ["Enable Auto Attack Events"] = "启用自动攻击事件",
+        ["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."] = "是否启用 AUTO_ATTACK_SELF 和 AUTO_ATTACK_OTHER 事件。",
     }
 end)

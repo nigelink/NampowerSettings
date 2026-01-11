@@ -257,3 +257,107 @@ function PrintTrinkets()
 		PrintTable(data)
 	end
 end
+
+if not Nampower:HasMinimumVersion(2, 24, 0) then
+	return
+end
+
+-- Auto Attack Event Constants
+local HITINFO_NORMALSWING = 0
+local HITINFO_UNK0 = 1
+local HITINFO_AFFECTS_VICTIM = 2
+local HITINFO_LEFTSWING = 4
+local HITINFO_UNK3 = 8
+local HITINFO_MISS = 16
+local HITINFO_ABSORB = 32
+local HITINFO_RESIST = 64
+local HITINFO_CRITICALHIT = 128
+local HITINFO_UNK8 = 256
+local HITINFO_UNK9 = 8192
+local HITINFO_GLANCING = 16384
+local HITINFO_CRUSHING = 32768
+local HITINFO_NOACTION = 65536
+local HITINFO_SWINGNOHITSOUND = 524288
+
+local VICTIMSTATE_UNAFFECTED = 0
+local VICTIMSTATE_NORMAL = 1
+local VICTIMSTATE_DODGE = 2
+local VICTIMSTATE_PARRY = 3
+local VICTIMSTATE_INTERRUPT = 4
+local VICTIMSTATE_BLOCKS = 5
+local VICTIMSTATE_EVADES = 6
+local VICTIMSTATE_IS_IMMUNE = 7
+local VICTIMSTATE_DEFLECTS = 8
+
+local victimStateNames = {
+	[0] = "Unaffected",
+	[1] = "Normal",
+	[2] = "Dodged",
+	[3] = "Parried",
+	[4] = "Interrupted",
+	[5] = "Blocked",
+	[6] = "Evaded",
+	[7] = "Immune",
+	[8] = "Deflected"
+}
+
+function GetHitType(hitInfo)
+	local isCrit = bit.band(hitInfo, HITINFO_CRITICALHIT) ~= 0
+	local isGlancing = bit.band(hitInfo, HITINFO_GLANCING) ~= 0
+	local isCrushing = bit.band(hitInfo, HITINFO_CRUSHING) ~= 0
+	local isMiss = bit.band(hitInfo, HITINFO_MISS) ~= 0
+	local isOffHand = bit.band(hitInfo, HITINFO_LEFTSWING) ~= 0
+
+	local hitType = "Normal"
+	if isMiss then
+		hitType = "Miss"
+	elseif isCrit then
+		hitType = "Critical"
+	elseif isGlancing then
+		hitType = "Glancing"
+	elseif isCrushing then
+		hitType = "Crushing"
+	end
+
+	if isOffHand then
+		hitType = hitType .. " (Off-hand)"
+	end
+
+	return hitType
+end
+
+function GetVictimStateName(victimState)
+	return victimStateNames[victimState] or "Unknown"
+end
+
+local function onAutoAttack(attackerGuid, targetGuid, totalDamage, hitInfo, victimState, subDamageCount, blockedAmount, totalAbsorb, totalResist)
+	local hitType = GetHitType(hitInfo)
+	local victimStateName = GetVictimStateName(victimState)
+
+	print(string.format(
+		"Auto Attack: %s -> %s | %d damage (%s) | State: %s | SubDmg: %d | Absorbed: %d | Resisted: %d | Blocked: %d",
+		attackerGuid, targetGuid, totalDamage, hitType, victimStateName,
+		subDamageCount, totalAbsorb, totalResist, blockedAmount
+	))
+end
+
+-- helpful event hooks for debugging
+--Nampower:RegisterEvent("UNIT_CASTEVENT", function(casterGuid, targetGuid, event, spellID, castDuration)
+--  if(casterGuid=="0x00000000001CD43C") then
+--    print("CASTEVENT: " .. tostring(casterGuid) .. " -> " .. tostring(targetGuid) .. " event: " .. tostring(event) .. " spellID: " .. tostring(spellID) .. " castDuration: " .. tostring(castDuration))
+--  end
+--end)
+
+--Nampower:RegisterEvent("AURA_CAST_ON_OTHER", function(spellId, caster, target, effect, effectname)
+--  local unitName = target and UnitName(target) or ""
+--  print("AURA_CAST_ON_OTHER: " .. tostring(spellId) .. " " .. tostring(GetSpellRecField(spellId, "name")) .. " by " .. tostring(UnitName(caster)) .. " on " .. unitName .. " effect: " .. tostring(effect) .. " effectname: " .. tostring(effectname))
+--end)
+--
+--Nampower:RegisterEvent("AURA_CAST_ON_SELF", function(spellId, caster, target, effect, effectname)
+--    local unitName = target and UnitName(target) or ""
+--  print("AURA_CAST_ON_SELF: " .. tostring(spellId) .. " " .. tostring(GetSpellRecField(spellId, "name")) .. " by " .. tostring(UnitName(caster)) .. " on " .. unitName .. " effect: " .. tostring(effect) .. " effectname: " .. tostring(effectname))
+--end)
+--
+
+--Nampower:RegisterEvent("AUTO_ATTACK_SELF", onAutoAttack)
+--Nampower:RegisterEvent("AUTO_ATTACK_OTHER", onAutoAttack)

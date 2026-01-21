@@ -852,6 +852,82 @@ if Nampower:HasMinimumVersion(2, 24, 0) then
 	}
 end
 
+if Nampower:HasMinimumVersion(2, 25, 0) then
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellStartEvents = {
+		type = "toggle",
+		name = L["Enable Spell Start Events"],
+		desc = L["Whether to enable SPELL_START_SELF and SPELL_START_OTHER events."],
+		order = 165,
+		get = function()
+			return GetCVar("NP_EnableSpellStartEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableSpellStartEvents = v
+			if v == true then
+				SetCVar("NP_EnableSpellStartEvents", "1")
+			else
+				SetCVar("NP_EnableSpellStartEvents", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellGoEvents = {
+		type = "toggle",
+		name = L["Enable Spell Go Events"],
+		desc = L["Whether to enable SPELL_GO_SELF and SPELL_GO_OTHER events."],
+		order = 170,
+		get = function()
+			return GetCVar("NP_EnableSpellGoEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableSpellGoEvents = v
+			if v == true then
+				SetCVar("NP_EnableSpellGoEvents", "1")
+			else
+				SetCVar("NP_EnableSpellGoEvents", "0")
+			end
+		end,
+	}
+end
+
+if Nampower:HasMinimumVersion(2, 26, 0) then
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellHealEvents = {
+		type = "toggle",
+		name = L["Enable Spell Heal Events"],
+		desc = L["Whether to enable SPELL_HEAL_BY_SELF, SPELL_HEAL_BY_OTHER, and SPELL_HEAL_ON_SELF events."],
+		order = 175,
+		get = function()
+			return GetCVar("NP_EnableSpellHealEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableSpellHealEvents = v
+			if v == true then
+				SetCVar("NP_EnableSpellHealEvents", "1")
+			else
+				SetCVar("NP_EnableSpellHealEvents", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellEnergizeEvents = {
+		type = "toggle",
+		name = L["Enable Spell Energize Events"],
+		desc = L["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."],
+		order = 180,
+		get = function()
+			return GetCVar("NP_EnableSpellEnergizeEvents") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableSpellEnergizeEvents = v
+			if v == true then
+				SetCVar("NP_EnableSpellEnergizeEvents", "1")
+			else
+				SetCVar("NP_EnableSpellEnergizeEvents", "0")
+			end
+		end,
+	}
+end
+
 local deuce = Nampower:NewModule("Nampower Options Menu")
 deuce.hasFuBar = IsAddOnLoaded("FuBar") and FuBar
 deuce.consoleCmd = not deuce.hasFuBar

@@ -361,3 +361,142 @@ end
 
 --Nampower:RegisterEvent("AUTO_ATTACK_SELF", onAutoAttack)
 --Nampower:RegisterEvent("AUTO_ATTACK_OTHER", onAutoAttack)
+
+if not Nampower:HasMinimumVersion(2, 25, 0) then
+	return
+end
+
+local function onSpellStart(itemId, spellId, casterGuid, targetGuid, castFlags, castTime)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	print(string.format(
+		"SPELL_START: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | CastTime: %d",
+		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, castTime
+	))
+end
+
+local function onSpellGo(itemId, spellId, casterGuid, targetGuid, castFlags, numTargetsHit, numTargetsMissed)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	print(string.format(
+		"SPELL_GO: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | Hit: %d | Missed: %d",
+		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, numTargetsHit, numTargetsMissed
+	))
+end
+
+local function onSpellFailedSelf(spellId, spellResult, failedByServer)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	local source = failedByServer == 1 and "Server" or "Client"
+	print(string.format(
+		"SPELL_FAILED_SELF: %s (id:%d) | Result: %d | Source: %s",
+		tostring(spellName), spellId, spellResult, source
+	))
+end
+
+local function onSpellFailedOther(casterGuid, spellId)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	print(string.format(
+		"SPELL_FAILED_OTHER: %s (id:%d) | Caster: %s",
+		tostring(spellName), spellId, casterGuid
+	))
+end
+
+local function onSpellDelayed(casterGuid, delayMs)
+	print(string.format(
+		"SPELL_DELAYED: Caster: %s | Delay: %dms",
+		casterGuid, delayMs
+	))
+end
+
+local function onSpellChannelStart(spellId, targetGuid, durationMs)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	print(string.format(
+		"SPELL_CHANNEL_START: %s (id:%d) | Target: %s | Duration: %dms",
+		tostring(spellName), spellId, targetGuid, durationMs
+	))
+end
+
+local function onSpellChannelUpdate(spellId, targetGuid, remainingMs)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	print(string.format(
+		"SPELL_CHANNEL_UPDATE: %s (id:%d) | Target: %s | Remaining: %dms",
+		tostring(spellName), spellId, targetGuid, remainingMs
+	))
+end
+
+--Nampower:RegisterEvent("SPELL_START_SELF", onSpellStart)
+--Nampower:RegisterEvent("SPELL_START_OTHER", onSpellStart)
+--Nampower:RegisterEvent("SPELL_GO_SELF", onSpellGo)
+--Nampower:RegisterEvent("SPELL_GO_OTHER", onSpellGo)
+--Nampower:RegisterEvent("SPELL_FAILED_SELF", onSpellFailedSelf)
+--Nampower:RegisterEvent("SPELL_FAILED_OTHER", onSpellFailedOther)
+--Nampower:RegisterEvent("SPELL_DELAYED_SELF", onSpellDelayed)
+--Nampower:RegisterEvent("SPELL_DELAYED_OTHER", onSpellDelayed)
+--Nampower:RegisterEvent("SPELL_CHANNEL_START", onSpellChannelStart)
+--Nampower:RegisterEvent("SPELL_CHANNEL_UPDATE", onSpellChannelUpdate)
+
+if not Nampower:HasMinimumVersion(2, 26, 0) then
+	return
+end
+
+-- Spell Heal Events (gated behind NP_EnableSpellHealEvents CVar, default 0)
+-- SPELL_HEAL_BY_SELF - Fires when the active player is the caster (you healed someone)
+-- SPELL_HEAL_BY_OTHER - Fires when someone other than the active player is the caster (someone else healed someone)
+-- SPELL_HEAL_ON_SELF - Fires when the active player is the target (you received a heal)
+-- Note: SPELL_HEAL_BY_SELF and SPELL_HEAL_ON_SELF can both fire for the same heal if you heal yourself
+
+local function createSpellHealHandler(eventName)
+	return function(targetGuid, casterGuid, spellId, amount, critical, periodic)
+		local critText = critical == 1 and " (CRIT)" or ""
+		local periodicText = periodic == 1 and " (PERIODIC)" or ""
+		local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+		print(string.format(
+			"%s: %s healed %s for %d with %s%s%s",
+			eventName, UnitName(casterGuid), UnitName(targetGuid), amount, tostring(spellName), critText, periodicText
+		))
+	end
+end
+
+-- Spell Energize Events (gated behind NP_EnableSpellEnergizeEvents CVar, default 0)
+-- SPELL_ENERGIZE_BY_SELF - Fires when the active player is the caster (you restored power to someone)
+-- SPELL_ENERGIZE_BY_OTHER - Fires when someone other than the active player is the caster (someone else restored power)
+-- SPELL_ENERGIZE_ON_SELF - Fires when the active player is the target (you received power)
+-- Note: SPELL_ENERGIZE_BY_SELF and SPELL_ENERGIZE_ON_SELF can both fire for the same energize if you restore power to yourself
+
+-- Power Type Constants
+local POWER_MANA = 0
+local POWER_RAGE = 1
+local POWER_FOCUS = 2
+local POWER_ENERGY = 3
+local POWER_HAPPINESS = 4
+local POWER_HEALTH = -2 -- 0xFFFFFFFE as unsigned
+
+local POWER_NAMES = {
+	[0] = "Mana",
+	[1] = "Rage",
+	[2] = "Focus",
+	[3] = "Energy",
+	[4] = "Happiness",
+	[-2] = "Health",
+}
+
+function GetPowerTypeName(powerType)
+	return POWER_NAMES[powerType] or "Unknown"
+end
+
+local function createSpellEnergizeHandler(eventName)
+	return function(targetGuid, casterGuid, spellId, powerType, amount, periodic)
+		local powerName = GetPowerTypeName(powerType)
+		local periodicText = periodic == 1 and " (PERIODIC)" or ""
+		local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+		print(string.format(
+			"%s: %s restored %d %s to %s with %s%s",
+			eventName, UnitName(casterGuid), amount, powerName, UnitName(targetGuid), tostring(spellName), periodicText
+		))
+	end
+end
+
+--Nampower:RegisterEvent("SPELL_HEAL_BY_SELF", createSpellHealHandler("SPELL_HEAL_BY_SELF"))
+--Nampower:RegisterEvent("SPELL_HEAL_BY_OTHER", createSpellHealHandler("SPELL_HEAL_BY_OTHER"))
+--Nampower:RegisterEvent("SPELL_HEAL_ON_SELF", createSpellHealHandler("SPELL_HEAL_ON_SELF"))
+--Nampower:RegisterEvent("SPELL_ENERGIZE_BY_SELF", createSpellEnergizeHandler("SPELL_ENERGIZE_BY_SELF"))
+--Nampower:RegisterEvent("SPELL_ENERGIZE_BY_OTHER", createSpellEnergizeHandler("SPELL_ENERGIZE_BY_OTHER"))
+--Nampower:RegisterEvent("SPELL_ENERGIZE_ON_SELF", createSpellEnergizeHandler("SPELL_ENERGIZE_ON_SELF"))

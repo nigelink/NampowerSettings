@@ -127,6 +127,18 @@ L:RegisterTranslations("enUS", function()
 
         ["Enable Auto Attack Events"] = true,
         ["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."] = true,
+
+        ["Enable Spell Start Events"] = true,
+        ["Whether to enable SPELL_START_SELF and SPELL_START_OTHER events."] = true,
+
+        ["Enable Spell Go Events"] = true,
+        ["Whether to enable SPELL_GO_SELF and SPELL_GO_OTHER events."] = true,
+
+        ["Enable Spell Heal Events"] = true,
+        ["Whether to enable SPELL_HEAL_BY_SELF, SPELL_HEAL_BY_OTHER, and SPELL_HEAL_ON_SELF events."] = true,
+
+        ["Enable Spell Energize Events"] = true,
+        ["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."] = true,
     }
 end)
 
@@ -257,5 +269,17 @@ L:RegisterTranslations("zhCN", function()
 
         ["Enable Auto Attack Events"] = "启用自动攻击事件",
         ["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."] = "是否启用 AUTO_ATTACK_SELF 和 AUTO_ATTACK_OTHER 事件。",
+
+        ["Enable Spell Start Events"] = "启用法术开始事件",
+        ["Whether to enable SPELL_START_SELF and SPELL_START_OTHER events."] = "是否启用 SPELL_START_SELF 和 SPELL_START_OTHER 事件。",
+
+        ["Enable Spell Go Events"] = "启用法术释放事件",
+        ["Whether to enable SPELL_GO_SELF and SPELL_GO_OTHER events."] = "是否启用 SPELL_GO_SELF 和 SPELL_GO_OTHER 事件。",
+
+        ["Enable Spell Heal Events"] = "启用法术治疗事件",
+        ["Whether to enable SPELL_HEAL_BY_SELF, SPELL_HEAL_BY_OTHER, and SPELL_HEAL_ON_SELF events."] = "是否启用 SPELL_HEAL_BY_SELF、SPELL_HEAL_BY_OTHER 和 SPELL_HEAL_ON_SELF 事件。",
+
+        ["Enable Spell Energize Events"] = "启用法术回能事件",
+        ["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."] = "是否启用 SPELL_ENERGIZE_BY_SELF、SPELL_ENERGIZE_BY_OTHER 和 SPELL_ENERGIZE_ON_SELF 事件。",
     }
 end)

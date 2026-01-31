@@ -1,6 +1,8 @@
 ## Interface: 11200
 ## Title: Nampower Settings
 ## Notes: the companion compatibility addon to the mod of the same name.
+## Title-zhCN:|CFFEE7600[模组增强]|R |cff00ffffNampower设置|R|cffff1450[需Nampower模组]
+## Notes-zhCN: Nampower模组配套的设置工具，能够根据自己的网络和需要设置该模组内部的各种参数。
 ## SavedVariablesPerCharacter: NampowerSettingsDB
 ## X-Embeds: Ace2, FuBarPlugin-2.0, CompostLib, DewDropLib, TabletLib
 

@@ -72,8 +72,20 @@ local NORMAL_QUEUE_POPPED = 3
 local NON_GCD_QUEUED = 4
 local NON_GCD_QUEUE_POPPED = 5
 
-local function spellQueueEvent(eventCode, spellId)
-	if eventCode == NORMAL_QUEUED or eventCode == NON_GCD_QUEUED then
+local function spellQueueEventNampower(eventCode, spellId)
+  if eventCode == NORMAL_QUEUED or eventCode == NON_GCD_QUEUED then
+    local texture = GetSpellIconTexture(GetSpellRecField(spellId, "spellIconID"))
+    if texture then
+      Nampower.queued_spell.texture:SetTexture(texture)
+      Nampower.queued_spell:Show()
+    end
+  elseif eventCode == NORMAL_QUEUE_POPPED or eventCode == NON_GCD_QUEUE_POPPED then
+    Nampower.queued_spell:Hide()
+  end
+end
+
+local function spellQueueEventSuperwow(eventCode, spellId)
+  if eventCode == NORMAL_QUEUED or eventCode == NON_GCD_QUEUED then
 		local _, _, texture = SpellInfo(spellId) -- superwow function
 		Nampower.queued_spell.texture:SetTexture(texture)
 		Nampower.queued_spell:Show()
@@ -84,8 +96,10 @@ end
 
 local function toggleEventListener()
 	if Nampower.db.profile.show_queued_spell then
-		if SpellInfo then
-			Nampower:RegisterEvent("SPELL_QUEUE_EVENT", spellQueueEvent)
+    if GetSpellRecField and GetSpellIconTexture then
+      Nampower:RegisterEvent("SPELL_QUEUE_EVENT", spellQueueEventNampower)
+    elseif SpellInfo then
+      Nampower:RegisterEvent("SPELL_QUEUE_EVENT", spellQueueEventSuperwow)
 		else
 			DEFAULT_CHAT_FRAME:AddMessage(L["Superwow required to display queued spells."])
 			if Nampower:IsEventRegistered("SPELL_QUEUE_EVENT") then

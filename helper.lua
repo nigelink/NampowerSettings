@@ -500,3 +500,150 @@ end
 --Nampower:RegisterEvent("SPELL_ENERGIZE_BY_SELF", createSpellEnergizeHandler("SPELL_ENERGIZE_BY_SELF"))
 --Nampower:RegisterEvent("SPELL_ENERGIZE_BY_OTHER", createSpellEnergizeHandler("SPELL_ENERGIZE_BY_OTHER"))
 --Nampower:RegisterEvent("SPELL_ENERGIZE_ON_SELF", createSpellEnergizeHandler("SPELL_ENERGIZE_ON_SELF"))
+
+if not Nampower:HasMinimumVersion(2, 30, 0) then
+	return
+end
+
+-- Aura Duration Update Events
+-- BUFF_UPDATE_DURATION_SELF - aura slot 0-31
+-- DEBUFF_UPDATE_DURATION_SELF - aura slot 32-47
+-- Parameters: auraSlot, durationMs, expirationTimeMs
+
+local function createAuraDurationHandler(eventName)
+	return function(auraSlot, durationMs, expirationTimeMs)
+		print(string.format(
+			"%s: slot %d | Duration: %dms | Expires: %d",
+			eventName, auraSlot, durationMs, expirationTimeMs
+		))
+	end
+end
+--
+--Nampower:RegisterEvent("DEBUFF_UPDATE_DURATION_SELF", createAuraDurationHandler("DEBUFF_UPDATE_DURATION_SELF"))
+--Nampower:RegisterEvent("BUFF_UPDATE_DURATION_SELF", createAuraDurationHandler("BUFF_UPDATE_DURATION_SELF"))
+
+-- Aura Added/Removed Events
+-- BUFF_ADDED_SELF, BUFF_REMOVED_SELF, BUFF_ADDED_OTHER, BUFF_REMOVED_OTHER
+-- DEBUFF_ADDED_SELF, DEBUFF_REMOVED_SELF, DEBUFF_ADDED_OTHER, DEBUFF_REMOVED_OTHER
+-- Parameters: guid, luaSlot, spellId, stackCount, auraLevel, auraSlot
+
+local function createAuraChangeHandler(eventName)
+	return function(guid, luaSlot, spellId, stackCount, auraLevel, auraSlot)
+		local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+		print(string.format(
+			"%s: %s | luaSlot %d | %s (id:%d) | Stacks: %d | Level: %d | auraSlot: %d",
+			eventName, guid, luaSlot, tostring(spellName), spellId, stackCount, auraLevel, auraSlot
+		))
+	end
+end
+
+--Nampower:RegisterEvent("BUFF_ADDED_SELF", createAuraChangeHandler("BUFF_ADDED_SELF"))
+--Nampower:RegisterEvent("BUFF_REMOVED_SELF", createAuraChangeHandler("BUFF_REMOVED_SELF"))
+--Nampower:RegisterEvent("BUFF_ADDED_OTHER", createAuraChangeHandler("BUFF_ADDED_OTHER"))
+--Nampower:RegisterEvent("BUFF_REMOVED_OTHER", createAuraChangeHandler("BUFF_REMOVED_OTHER"))
+--Nampower:RegisterEvent("DEBUFF_ADDED_SELF", createAuraChangeHandler("DEBUFF_ADDED_SELF"))
+--Nampower:RegisterEvent("DEBUFF_REMOVED_SELF", createAuraChangeHandler("DEBUFF_REMOVED_SELF"))
+--Nampower:RegisterEvent("DEBUFF_ADDED_OTHER", createAuraChangeHandler("DEBUFF_ADDED_OTHER"))
+--Nampower:RegisterEvent("DEBUFF_REMOVED_OTHER", createAuraChangeHandler("DEBUFF_REMOVED_OTHER"))
+
+-- Spell Damage Events (gated behind NP_EnableSpellDamageEvents CVar, default 0)
+-- SPELL_DAMAGE_EVENT_SELF - Fires when the active player deals spell damage
+-- SPELL_DAMAGE_EVENT_OTHER - Fires when someone other than the active player deals spell damage
+
+-- Spell Damage Hit Info Constants
+local SPELL_DAMAGE_HIT_NORMAL = 0
+local SPELL_DAMAGE_HIT_CRIT = 2
+
+-- Spell School Constants
+local SPELL_SCHOOL_NORMAL = 0
+local SPELL_SCHOOL_HOLY = 1
+local SPELL_SCHOOL_FIRE = 2
+local SPELL_SCHOOL_NATURE = 3
+local SPELL_SCHOOL_FROST = 4
+local SPELL_SCHOOL_SHADOW = 5
+local SPELL_SCHOOL_ARCANE = 6
+
+local SPELL_SCHOOL_NAMES = {
+	[0] = "Physical",
+	[1] = "Holy",
+	[2] = "Fire",
+	[3] = "Nature",
+	[4] = "Frost",
+	[5] = "Shadow",
+	[6] = "Arcane",
+}
+
+function GetSpellSchoolName(spellSchool)
+	return SPELL_SCHOOL_NAMES[spellSchool] or "Unknown"
+end
+
+local function createSpellDamageHandler(eventName)
+	return function(targetGuid, casterGuid, spellId, amount, mitigationStr, hitInfo, spellSchool, effectAuraStr)
+		local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+		local schoolName = GetSpellSchoolName(spellSchool)
+		local critText = hitInfo == SPELL_DAMAGE_HIT_CRIT and " (CRIT)" or ""
+		print(string.format(
+			"%s: %s -> %s | %s (id:%d) | %d %s damage%s | Mitigation: %s | HitInfo: %d | Effects: %s",
+			eventName, casterGuid, targetGuid, tostring(spellName), spellId, amount, schoolName, critText, mitigationStr, hitInfo, effectAuraStr
+		))
+	end
+end
+
+--Nampower:RegisterEvent("SPELL_DAMAGE_EVENT_SELF", createSpellDamageHandler("SPELL_DAMAGE_EVENT_SELF"))
+--Nampower:RegisterEvent("SPELL_DAMAGE_EVENT_OTHER", createSpellDamageHandler("SPELL_DAMAGE_EVENT_OTHER"))
+
+if not Nampower:HasMinimumVersion(2, 31, 0) then
+	return
+end
+
+-- Spell Miss Events (gated behind NP_EnableSpellMissEvents CVar, default 0)
+-- SPELL_MISS_SELF - Fires when the active player's spell misses/resists/is immune/etc
+-- SPELL_MISS_OTHER - Fires when someone else's spell misses/resists/is immune/etc
+-- Triggered by SMSG_SPELLLOGMISS, SMSG_PROCRESIST, and SMSG_SPELLORDAMAGE_IMMUNE
+
+-- SpellMissInfo Constants
+local SPELL_MISS_NONE = 0
+local SPELL_MISS_MISS = 1
+local SPELL_MISS_RESIST = 2
+local SPELL_MISS_DODGE = 3
+local SPELL_MISS_PARRY = 4
+local SPELL_MISS_BLOCK = 5
+local SPELL_MISS_EVADE = 6
+local SPELL_MISS_IMMUNE = 7
+local SPELL_MISS_IMMUNE2 = 8
+local SPELL_MISS_DEFLECT = 9
+local SPELL_MISS_ABSORB = 10
+local SPELL_MISS_REFLECT = 11
+
+local SPELL_MISS_NAMES = {
+	[0] = "None",
+	[1] = "Miss",
+	[2] = "Resist",
+	[3] = "Dodge",
+	[4] = "Parry",
+	[5] = "Block",
+	[6] = "Evade",
+	[7] = "Immune",
+	[8] = "Immune",
+	[9] = "Deflect",
+	[10] = "Absorb",
+	[11] = "Reflect",
+}
+
+function GetSpellMissName(missInfo)
+	return SPELL_MISS_NAMES[missInfo] or "Unknown"
+end
+
+local function createSpellMissHandler(eventName)
+	return function(casterGuid, targetGuid, spellId, missInfo)
+		local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+		local missName = GetSpellMissName(missInfo)
+		print(string.format(
+			"%s: %s -> %s | %s (id:%d) | %s",
+			eventName, UnitName(casterGuid), UnitName(targetGuid), tostring(spellName), spellId, missName
+		))
+	end
+end
+
+--Nampower:RegisterEvent("SPELL_MISS_SELF", createSpellMissHandler("SPELL_MISS_SELF"))
+--Nampower:RegisterEvent("SPELL_MISS_OTHER", createSpellMissHandler("SPELL_MISS_OTHER"))

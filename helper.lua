@@ -366,11 +366,18 @@ if not Nampower:HasMinimumVersion(2, 25, 0) then
 	return
 end
 
-local function onSpellStart(itemId, spellId, casterGuid, targetGuid, castFlags, castTime)
+local spellTypeNames = {
+	[0] = "Normal",
+	[1] = "Channeling",
+	[2] = "Autorepeating",
+}
+
+local function onSpellStart(itemId, spellId, casterGuid, targetGuid, castFlags, castTime, duration, spellType)
 	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	local spellTypeName = spellTypeNames[spellType] or "Unknown"
 	print(string.format(
-		"SPELL_START: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | CastTime: %d",
-		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, castTime
+		"SPELL_START: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | CastTime: %dms | Duration: %dms | Type: %s",
+		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, castTime, duration, spellTypeName
 	))
 end
 

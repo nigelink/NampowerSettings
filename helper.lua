@@ -654,3 +654,105 @@ end
 
 --Nampower:RegisterEvent("SPELL_MISS_SELF", createSpellMissHandler("SPELL_MISS_SELF"))
 --Nampower:RegisterEvent("SPELL_MISS_OTHER", createSpellMissHandler("SPELL_MISS_OTHER"))
+
+if not Nampower:HasMinimumVersion(2, 39, 0) then
+  return
+end
+
+-- UNIT_INVENTORY_CHANGED - fires when a unit's inventory changes (standard named token variant)
+-- Parameters: unit (string) - unit token like "player", "target", "party1", etc.
+
+-- UNIT_INVENTORY_CHANGED_GUID - fires when a unit's inventory changes (GUID variant)
+-- Parameters:
+--   guid        (string) - unit GUID e.g. "0xF5300000000000A5"
+--   isPlayer    (int)    - 1 if the unit is the active player, 0 otherwise
+--   isTarget    (int)    - 1 if the unit is the current locked target, 0 otherwise
+--   isMouseover (int)    - 1 if the unit is the current mouseover, 0 otherwise
+--   isPet       (int)    - 1 if the unit is the active player's pet, 0 otherwise
+--   partyIndex  (int)    - party slot (1-4) if the unit is a party member, 0 otherwise
+--   raidIndex   (int)    - raid slot (1-40) if the unit is a raid member, 0 otherwise
+
+local function onUnitInventoryChanged(unit)
+  print(string.format("UNIT_MODEL_CHANGED: %s", unit))
+end
+
+local function onUnitInventoryChangedGuid(guid, isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex)
+  print(string.format(
+      "UNIT_MODEL_CHANGED_GUID: %s | isPlayer:%d isTarget:%d isMouseover:%d isPet:%d party:%d raid:%d",
+      guid, isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex
+  ))
+end
+
+--Nampower:RegisterEvent("UNIT_MODEL_CHANGED", onUnitInventoryChanged)
+--Nampower:RegisterEvent("UNIT_MODEL_CHANGED_GUID", onUnitInventoryChangedGuid)
+
+-- UNIT_MANA - fires when a unit's mana changes (standard named token variant)
+-- Parameters: unit (string) - unit token like "player", "target", "party1", etc.
+
+-- UNIT_MANA_GUID - fires when a unit's mana changes (GUID variant)
+-- Parameters:
+--   guid        (string) - unit GUID e.g. "0xF5300000000000A5"
+--   isPlayer    (int)    - 1 if the unit is the active player, 0 otherwise
+--   isTarget    (int)    - 1 if the unit is the current locked target, 0 otherwise
+--   isMouseover (int)    - 1 if the unit is the current mouseover, 0 otherwise
+--   isPet       (int)    - 1 if the unit is the active player's pet, 0 otherwise
+--   partyIndex  (int)    - party slot (1-4) if the unit is a party member, 0 otherwise
+--   raidIndex   (int)    - raid slot (1-40) if the unit is a raid member, 0 otherwise
+
+local function onUnitMana(unit)
+	print(string.format("UNIT_MANA: %s", unit))
+end
+
+local function onUnitManaGuid(guid, isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex)
+  if UnitName(guid) == "Tankeboy" or  UnitName(guid) == "Icansummon" then
+    print(string.format(
+        "UNIT_MANA_GUID: %s | isPlayer:%d isTarget:%d isMouseover:%d isPet:%d party:%d raid:%d",
+        UnitName(guid), isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex
+    ))
+  end
+end
+
+--Nampower:RegisterEvent("UNIT_MANA", onUnitMana)
+--Nampower:RegisterEvent("UNIT_MANA_GUID", onUnitManaGuid)
+
+-- UNIT_COMBAT - fires when a unit participates in combat (standard named token variant)
+-- Parameters:
+--   unit     (string) - unit token like "player", "target", "party1", etc.
+--   action   (string) - e.g. "WOUND", "MISS", "DODGE", "PARRY", "BLOCK", "EVADE", "IMMUNE", "REFLECT", "ABSORB", "INTERRUPT"
+--   critical (string) - "CRITICAL" if a crit, "" otherwise
+--   damage   (int)    - raw damage amount (0 for non-damaging outcomes)
+--   school   (int)    - damage school (0=Physical, 1=Holy, 2=Fire, 3=Nature, 4=Frost, 5=Shadow, 6=Arcane)
+
+-- UNIT_COMBAT_GUID - fires once per combat feedback event, identified by GUID
+-- Unlike other GUID events, carries full combat detail rather than unit membership flags.
+-- Parameters:
+--   guid       (string) - unit GUID e.g. "0xF5300000000000A5"
+--   action     (string) - e.g. "WOUND", "MISS", "DODGE", "PARRY", "BLOCK", "EVADE", "IMMUNE", "REFLECT", "ABSORB", "INTERRUPT"
+--   damage     (int)    - raw damage amount (0 for non-damaging outcomes like dodge/miss)
+--   school     (int)    - damage school (0=Physical, 1=Holy, 2=Fire, 3=Nature, 4=Frost, 5=Shadow, 6=Arcane)
+--   hitInfo    (int)    - hit info bitfield
+--   isInteract (int)    - 1 if the unit matches the current interact target, 0 otherwise
+--   isPet      (int)    - 1 if the unit is the active player's pet, 0 otherwise
+--   partyIndex (int)    - party slot (1-4) if the unit is a party member, 0 otherwise
+--   raidIndex  (int)    - raid slot (1-40) if the unit is a raid member, 0 otherwise
+
+local function onUnitCombat(unit, action, critical, damage, school)
+  local schoolName = GetSpellSchoolName(school)
+  local critText = critical == "CRITICAL" and " (CRIT)" or ""
+  print(string.format(
+      "UNIT_COMBAT: %s | %s | %d %s damage%s",
+      unit, action, damage, schoolName, critText
+  ))
+end
+
+local function onUnitCombatGuid(guid, action, damage, school, hitInfo, isInteract, isPet, partyIndex, raidIndex)
+  local name = UnitName(guid)
+  local schoolName = GetSpellSchoolName(school)
+  print(string.format(
+      "UNIT_COMBAT_GUID: %s | %s | %d %s | hitInfo:%d isInteract:%d isPet:%d party:%d raid:%d",
+      name, action, damage, schoolName, hitInfo, isInteract, isPet, partyIndex, raidIndex
+  ))
+end
+
+--Nampower:RegisterEvent("UNIT_COMBAT", onUnitCombat)
+--Nampower:RegisterEvent("UNIT_COMBAT_GUID", onUnitCombatGuid)

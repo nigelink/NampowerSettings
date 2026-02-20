@@ -139,6 +139,27 @@ L:RegisterTranslations("enUS", function()
 
         ["Enable Spell Energize Events"] = true,
         ["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."] = true,
+
+        ["Unit Event Filters"] = true,
+        ["Controls which unit identifiers trigger unit events (UNIT_HEALTH, UNIT_COMBAT, etc.). In the base game the same event can fire multiple times for the same unit, once per identifying string (e.g. 'party1', 'raid1', 'mouseover'). Disabling unused identifiers reduces redundant event calls. Note: 'player', 'target', and 'pet' (your own pet) always trigger regardless of these settings, as they are critical."] = true,
+
+        ["Enable Pet Unit Events"] = true,
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party and raid pet identifiers ('party1pet', 'raid1pet', etc.). Party pets additionally require Enable Party Unit Events to be on; raid pets additionally require Enable Raid Unit Events to be on. Your own pet ('pet') always fires events regardless of this setting."] = true,
+
+        ["Enable Party Unit Events"] = true,
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party member identifiers ('party1', 'party2', 'party3', 'party4'). Also required alongside Enable Pet Unit Events for party pet identifiers to fire."] = true,
+
+        ["Enable Raid Unit Events"] = true,
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for raid member identifiers ('raid1' through 'raid40'). Also required alongside Enable Pet Unit Events for raid pet identifiers to fire."] = true,
+
+        ["Enable Mouseover Unit Events"] = true,
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for the 'mouseover' unit identifier."] = true,
+
+        ["Enable GUID Unit Events"] = true,
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_MANA, UNIT_AURA, etc.) using the raw GUID as the unit token, mirroring SuperWoW behavior. Fires for every unit the client tracks — not just named tokens like 'player', 'party1', 'raid1' — which can cause significant event spam in raids, BGs, and crowded zones. Older addons (e.g. pfUI) written for standard named tokens may have performance issues receiving GUID-based events. Addons needing GUID tracking (e.g. Automarker, Cursive) should use the new dedicated UNIT_HEALTH_GUID, UNIT_MANA_GUID, etc. events instead, allowing this to be safely disabled."] = true,
+
+        ["Enable GUID Unit Event Filtering"] = true,
+        ["When enabled, suppresses high-frequency GUID events that cause spam in older addons — specifically UNIT_AURA, UNIT_HEALTH, UNIT_MANA, and similar events below UNIT_COMBAT, plus UNIT_NAME_UPDATE, UNIT_PORTRAIT_UPDATE, UNIT_INVENTORY_CHANGED, and PLAYER_GUILD_UPDATE. UNIT_COMBAT_GUID and other less frequent GUID events are still fired. Has no effect if Enable GUID Unit Events is disabled. This is a direct replacement for the 'Filter GUID Events' option in PerfBoost."] = true,
     }
 end)
 
@@ -281,5 +302,26 @@ L:RegisterTranslations("zhCN", function()
 
         ["Enable Spell Energize Events"] = "启用法术回能事件",
         ["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."] = "是否启用 SPELL_ENERGIZE_BY_SELF、SPELL_ENERGIZE_BY_OTHER 和 SPELL_ENERGIZE_ON_SELF 事件。",
+
+        ["Unit Event Filters"] = "单位事件过滤器",
+        ["Controls which unit identifiers trigger unit events (UNIT_HEALTH, UNIT_COMBAT, etc.). In the base game the same event can fire multiple times for the same unit, once per identifying string (e.g. 'party1', 'raid1', 'mouseover'). Disabling unused identifiers reduces redundant event calls. Note: 'player', 'target', and 'pet' (your own pet) always trigger regardless of these settings, as they are critical."] = "控制哪些单位标识符触发单位事件（UNIT_HEALTH、UNIT_COMBAT 等）。在原版游戏中，同一单位可能因多个标识符（如 'party1'、'raid1'、'mouseover'）重复触发同一事件。禁用不需要的标识符可减少冗余事件调用。注意：'player'（自身）、'target'（目标）和 'pet'（自己的宠物）始终会触发，不受此处设置影响，因为它们是关键标识符。",
+
+        ["Enable Pet Unit Events"] = "启用宠物单位事件",
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party and raid pet identifiers ('party1pet', 'raid1pet', etc.). Party pets additionally require Enable Party Unit Events to be on; raid pets additionally require Enable Raid Unit Events to be on. Your own pet ('pet') always fires events regardless of this setting."] = "是否为队伍和团队宠物标识符（'party1pet'、'raid1pet' 等）触发单位事件（UNIT_HEALTH、UNIT_COMBAT 等）。队伍宠物还需同时开启「启用队伍单位事件」；团队宠物还需同时开启「启用团队单位事件」。自己的宠物（'pet'）始终触发事件，不受此设置影响。",
+
+        ["Enable Party Unit Events"] = "启用队伍单位事件",
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party member identifiers ('party1', 'party2', 'party3', 'party4'). Also required alongside Enable Pet Unit Events for party pet identifiers to fire."] = "是否为队伍成员标识符（'party1'、'party2'、'party3'、'party4'）触发单位事件（UNIT_HEALTH、UNIT_COMBAT 等）。同时也是队伍宠物标识符触发的必要条件（需与「启用宠物单位事件」共同开启）。",
+
+        ["Enable Raid Unit Events"] = "启用团队单位事件",
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for raid member identifiers ('raid1' through 'raid40'). Also required alongside Enable Pet Unit Events for raid pet identifiers to fire."] = "是否为团队成员标识符（'raid1' 至 'raid40'）触发单位事件（UNIT_HEALTH、UNIT_COMBAT 等）。同时也是团队宠物标识符触发的必要条件（需与「启用宠物单位事件」共同开启）。",
+
+        ["Enable Mouseover Unit Events"] = "启用鼠标悬停单位事件",
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for the 'mouseover' unit identifier."] = "是否为 'mouseover'（鼠标悬停）单位标识符触发单位事件（UNIT_HEALTH、UNIT_COMBAT 等）。",
+
+        ["Enable GUID Unit Events"] = "启用GUID单位事件",
+        ["Whether to fire unit events (UNIT_HEALTH, UNIT_MANA, UNIT_AURA, etc.) using the raw GUID as the unit token, mirroring SuperWoW behavior. Fires for every unit the client tracks — not just named tokens like 'player', 'party1', 'raid1' — which can cause significant event spam in raids, BGs, and crowded zones. Older addons (e.g. pfUI) written for standard named tokens may have performance issues receiving GUID-based events. Addons needing GUID tracking (e.g. Automarker, Cursive) should use the new dedicated UNIT_HEALTH_GUID, UNIT_MANA_GUID, etc. events instead, allowing this to be safely disabled."] = "是否使用原始 GUID 作为单位标识符触发单位事件（UNIT_HEALTH、UNIT_MANA、UNIT_AURA 等），模拟 SuperWoW 行为。此功能会对客户端跟踪的所有单位触发事件——不仅限于 'player'、'party1'、'raid1' 等命名标识符——在团队、战场和人口密集区域可能产生大量事件。为标准命名标识符设计的旧版插件（如 pfUI）在收到 GUID 事件时可能出现性能问题。需要 GUID 跟踪的插件（如 Automarker、Cursive）应改用专用的 UNIT_HEALTH_GUID、UNIT_MANA_GUID 等事件，届时可安全禁用此选项。",
+
+        ["Enable GUID Unit Event Filtering"] = "启用GUID单位事件过滤",
+        ["When enabled, suppresses high-frequency GUID events that cause spam in older addons — specifically UNIT_AURA, UNIT_HEALTH, UNIT_MANA, and similar events below UNIT_COMBAT, plus UNIT_NAME_UPDATE, UNIT_PORTRAIT_UPDATE, UNIT_INVENTORY_CHANGED, and PLAYER_GUILD_UPDATE. UNIT_COMBAT_GUID and other less frequent GUID events are still fired. Has no effect if Enable GUID Unit Events is disabled. This is a direct replacement for the 'Filter GUID Events' option in PerfBoost."] = "启用后，将屏蔽对旧版插件造成刷屏的高频 GUID 事件——具体包括 UNIT_COMBAT 以下的事件（如 UNIT_AURA、UNIT_HEALTH、UNIT_MANA 等），以及 UNIT_NAME_UPDATE、UNIT_PORTRAIT_UPDATE、UNIT_INVENTORY_CHANGED 和 PLAYER_GUILD_UPDATE。UNIT_COMBAT_GUID 及其他低频 GUID 事件仍会正常触发。若已禁用「启用GUID单位事件」，则此设置无效。此选项直接替代 PerfBoost 中的「过滤GUID事件」功能。",
     }
 end)

@@ -133,6 +133,14 @@ function Nampower:SavePerCharacterSettings()
 		end
 	end
 
+	if Nampower.cmdtable.args.advanced_options.args.unit_events then
+		for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args.unit_events.args) do
+			if string.find(settingKey, "NP_") == 1 then
+				settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
+			end
+		end
+	end
+
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.qol_options.args) do
 		if string.find(settingKey, "NP_") == 1 then
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
@@ -164,6 +172,17 @@ function Nampower:ApplySavedSettings()
 		if string.find(settingKey, "NP_") == 1 then
 			if Nampower.db.profile[settingKey]~= nil then
 				settingData.set(Nampower.db.profile[settingKey])
+			end
+		end
+	end
+
+	if Nampower.cmdtable.args.advanced_options.args.unit_events then
+		for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args.unit_events.args) do
+			-- only apply settings that are prefixed with NP_
+			if string.find(settingKey, "NP_") == 1 then
+				if Nampower.db.profile[settingKey]~= nil then
+					settingData.set(Nampower.db.profile[settingKey])
+				end
 			end
 		end
 	end
@@ -939,6 +958,119 @@ if Nampower:HasMinimumVersion(2, 26, 0) then
 				SetCVar("NP_EnableSpellEnergizeEvents", "0")
 			end
 		end,
+	}
+end
+
+if Nampower:HasMinimumVersion(2, 39, 0) then
+	Nampower.cmdtable.args.advanced_options.args.unit_events = {
+		type = "group",
+		name = L["Unit Event Filters"],
+		desc = L["Controls which unit identifiers trigger unit events (UNIT_HEALTH, UNIT_COMBAT, etc.). In the base game the same event can fire multiple times for the same unit, once per identifying string (e.g. 'party1', 'raid1', 'mouseover'). Disabling unused identifiers reduces redundant event calls. Note: 'player', 'target', and 'pet' (your own pet) always trigger regardless of these settings, as they are critical."],
+		order = 200,
+		args = {
+			NP_EnableUnitEventsPet = {
+				type = "toggle",
+				name = L["Enable Pet Unit Events"],
+				desc = L["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party and raid pet identifiers ('party1pet', 'raid1pet', etc.). Party pets additionally require Enable Party Unit Events to be on; raid pets additionally require Enable Raid Unit Events to be on. Your own pet ('pet') always fires events regardless of this setting."],
+				order = 5,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsPet") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsPet = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsPet", "1")
+					else
+						SetCVar("NP_EnableUnitEventsPet", "0")
+					end
+				end,
+			},
+			NP_EnableUnitEventsParty = {
+				type = "toggle",
+				name = L["Enable Party Unit Events"],
+				desc = L["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for party member identifiers ('party1', 'party2', 'party3', 'party4'). Also required alongside Enable Pet Unit Events for party pet identifiers to fire."],
+				order = 10,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsParty") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsParty = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsParty", "1")
+					else
+						SetCVar("NP_EnableUnitEventsParty", "0")
+					end
+				end,
+			},
+			NP_EnableUnitEventsRaid = {
+				type = "toggle",
+				name = L["Enable Raid Unit Events"],
+				desc = L["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for raid member identifiers ('raid1' through 'raid40'). Also required alongside Enable Pet Unit Events for raid pet identifiers to fire."],
+				order = 15,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsRaid") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsRaid = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsRaid", "1")
+					else
+						SetCVar("NP_EnableUnitEventsRaid", "0")
+					end
+				end,
+			},
+			NP_EnableUnitEventsMouseover = {
+				type = "toggle",
+				name = L["Enable Mouseover Unit Events"],
+				desc = L["Whether to fire unit events (UNIT_HEALTH, UNIT_COMBAT, etc.) for the 'mouseover' unit identifier."],
+				order = 25,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsMouseover") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsMouseover = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsMouseover", "1")
+					else
+						SetCVar("NP_EnableUnitEventsMouseover", "0")
+					end
+				end,
+			},
+			NP_EnableUnitEventsGuid = {
+				type = "toggle",
+				name = L["Enable GUID Unit Events"],
+				desc = L["Whether to fire unit events (UNIT_HEALTH, UNIT_MANA, UNIT_AURA, etc.) using the raw GUID as the unit token, mirroring SuperWoW behavior. Fires for every unit the client tracks — not just named tokens like 'player', 'party1', 'raid1' — which can cause significant event spam in raids, BGs, and crowded zones. Older addons (e.g. pfUI) written for standard named tokens may have performance issues receiving GUID-based events. Addons needing GUID tracking (e.g. Automarker, Cursive) should use the new dedicated UNIT_HEALTH_GUID, UNIT_MANA_GUID, etc. events instead, allowing this to be safely disabled."],
+				order = 30,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsGuid") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsGuid = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsGuid", "1")
+					else
+						SetCVar("NP_EnableUnitEventsGuid", "0")
+					end
+				end,
+			},
+			NP_EnableUnitEventsGuidFiltering = {
+				type = "toggle",
+				name = L["Enable GUID Unit Event Filtering"],
+				desc = L["When enabled, suppresses high-frequency GUID events that cause spam in older addons — specifically UNIT_AURA, UNIT_HEALTH, UNIT_MANA, and similar events below UNIT_COMBAT, plus UNIT_NAME_UPDATE, UNIT_PORTRAIT_UPDATE, UNIT_INVENTORY_CHANGED, and PLAYER_GUILD_UPDATE. UNIT_COMBAT_GUID and other less frequent GUID events are still fired. Has no effect if Enable GUID Unit Events is disabled. This is a direct replacement for the 'Filter GUID Events' option in PerfBoost."],
+				order = 35,
+				get = function()
+					return GetCVar("NP_EnableUnitEventsGuidFiltering") == "1"
+				end,
+				set = function(v)
+					Nampower.db.profile.NP_EnableUnitEventsGuidFiltering = v
+					if v == true then
+						SetCVar("NP_EnableUnitEventsGuidFiltering", "1")
+					else
+						SetCVar("NP_EnableUnitEventsGuidFiltering", "0")
+					end
+				end,
+			},
+		},
 	}
 end
 

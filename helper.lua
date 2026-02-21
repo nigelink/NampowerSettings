@@ -372,21 +372,33 @@ local spellTypeNames = {
 	[2] = "Autorepeating",
 }
 
-local function onSpellStart(itemId, spellId, casterGuid, targetGuid, castFlags, castTime, duration, spellType)
+local function onSpellStart(itemId, spellId, casterGuid, targetGuid, castFlags, castTime, duration, spellType, corpseOwnerGuid)
 	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
 	local spellTypeName = spellTypeNames[spellType] or "Unknown"
-	print(string.format(
-		"SPELL_START: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | CastTime: %dms | Duration: %dms | Type: %s",
-		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, castTime, duration, spellTypeName
-	))
+  local caster = UnitName(casterGuid) or tostring(casterGuid)
+  local target = UnitName(targetGuid) or tostring(targetGuid)
+  local corpse = nil
+  if corpseOwnerGuid then
+    	corpse = UnitName(corpseOwnerGuid) or tostring(corpseOwnerGuid)
+  end
+  print(string.format(
+      "SPELL_START: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | CastTime: %dms | Duration: %dms | Type: %s | CorpseOwner: %s",
+      tostring(spellName), spellId, caster, target, itemId, castFlags, castTime, duration, spellTypeName, tostring(corpse)
+  ))
 end
 
-local function onSpellGo(itemId, spellId, casterGuid, targetGuid, castFlags, numTargetsHit, numTargetsMissed)
+local function onSpellGo(itemId, spellId, casterGuid, targetGuid, castFlags, numTargetsHit, numTargetsMissed, corpseOwnerGuid)
 	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
-	print(string.format(
-		"SPELL_GO: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | Hit: %d | Missed: %d",
-		tostring(spellName), spellId, casterGuid, targetGuid, itemId, castFlags, numTargetsHit, numTargetsMissed
-	))
+  local caster = UnitName(casterGuid) or tostring(casterGuid)
+  local target = UnitName(targetGuid) or tostring(targetGuid)
+  local corpse = nil
+  if corpseOwnerGuid then
+    	corpse = UnitName(corpseOwnerGuid) or tostring(corpseOwnerGuid)
+  end
+  print(string.format(
+      "SPELL_GO: %s (id:%d) | Caster: %s -> Target: %s | ItemId: %d | Flags: %d | Hit: %d | Missed: %d | CorpseOwner: %s",
+      tostring(spellName), spellId, caster, target, itemId, castFlags, numTargetsHit, numTargetsMissed, tostring(corpse)
+  ))
 end
 
 local function onSpellFailedSelf(spellId, spellResult, failedByServer)

@@ -160,6 +160,9 @@ L:RegisterTranslations("enUS", function()
 
         ["Enable GUID Unit Event Filtering"] = true,
         ["When enabled, suppresses high-frequency GUID events that cause spam in older addons — specifically UNIT_AURA, UNIT_HEALTH, UNIT_MANA, and similar events below UNIT_COMBAT, plus UNIT_NAME_UPDATE, UNIT_PORTRAIT_UPDATE, UNIT_INVENTORY_CHANGED, and PLAYER_GUILD_UPDATE. UNIT_COMBAT_GUID and other less frequent GUID events are still fired. Has no effect if Enable GUID Unit Events is disabled. This is a direct replacement for the 'Filter GUID Events' option in PerfBoost."] = true,
+
+        ["Preserve Greater Demon Autocast"] = true,
+        ["Whether to remember and restore Felguard/Doomguard autocast preferences when swapping or resummoning those greater demons."] = true,
     }
 end)
 
@@ -323,5 +326,8 @@ L:RegisterTranslations("zhCN", function()
 
         ["Enable GUID Unit Event Filtering"] = "启用GUID单位事件过滤",
         ["When enabled, suppresses high-frequency GUID events that cause spam in older addons — specifically UNIT_AURA, UNIT_HEALTH, UNIT_MANA, and similar events below UNIT_COMBAT, plus UNIT_NAME_UPDATE, UNIT_PORTRAIT_UPDATE, UNIT_INVENTORY_CHANGED, and PLAYER_GUILD_UPDATE. UNIT_COMBAT_GUID and other less frequent GUID events are still fired. Has no effect if Enable GUID Unit Events is disabled. This is a direct replacement for the 'Filter GUID Events' option in PerfBoost."] = "启用后，将屏蔽对旧版插件造成刷屏的高频 GUID 事件——具体包括 UNIT_COMBAT 以下的事件（如 UNIT_AURA、UNIT_HEALTH、UNIT_MANA 等），以及 UNIT_NAME_UPDATE、UNIT_PORTRAIT_UPDATE、UNIT_INVENTORY_CHANGED 和 PLAYER_GUILD_UPDATE。UNIT_COMBAT_GUID 及其他低频 GUID 事件仍会正常触发。若已禁用「启用GUID单位事件」，则此设置无效。此选项直接替代 PerfBoost 中的「过滤GUID事件」功能。",
+
+        ["Preserve Greater Demon Autocast"] = "保留大型恶魔自动施法",
+        ["Whether to remember and restore Felguard/Doomguard autocast preferences when swapping or resummoning those greater demons."] = "切换或重新召唤地狱守卫/末日守卫时，是否记忆并恢复其自动施法设置。",
     }
 end)

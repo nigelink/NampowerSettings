@@ -1074,6 +1074,26 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 	}
 end
 
+if Nampower:HasMinimumVersion(3, 1, 0) then
+	Nampower.cmdtable.args.qol_options.args.NP_PreserveGreaterDemonAutocast = {
+		type = "toggle",
+		name = L["Preserve Greater Demon Autocast"],
+		desc = L["Whether to remember and restore Felguard/Doomguard autocast preferences when swapping or resummoning those greater demons."],
+		order = 25,
+		get = function()
+			return GetCVar("NP_PreserveGreaterDemonAutocast") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_PreserveGreaterDemonAutocast = v
+			if v == true then
+				SetCVar("NP_PreserveGreaterDemonAutocast", "1")
+			else
+				SetCVar("NP_PreserveGreaterDemonAutocast", "0")
+			end
+		end,
+	}
+end
+
 local deuce = Nampower:NewModule("Nampower Options Menu")
 deuce.hasFuBar = IsAddOnLoaded("FuBar") and FuBar
 deuce.consoleCmd = not deuce.hasFuBar

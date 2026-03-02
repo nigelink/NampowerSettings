@@ -768,3 +768,47 @@ end
 
 --Nampower:RegisterEvent("UNIT_COMBAT", onUnitCombat)
 --Nampower:RegisterEvent("UNIT_COMBAT_GUID", onUnitCombatGuid)
+
+-- SPELL_CAST_EVENT - fires when you (or certain pets) initiate a spell cast
+-- Triggered client-side before the cast is sent to the server.
+-- Only fires for spells you initiated.
+-- Parameters:
+--   success    (int)    - 1 if cast succeeded, 0 if failed
+--   spellId    (int)    - spell ID
+--   castType   (int)    - see Cast Type Constants below
+--   targetGuid (string) - guid string like "0xF5300000000000A5"
+--   itemId     (int)    - item ID that triggered the spell, 0 if not item-triggered
+
+-- Cast Type Constants
+local CAST_TYPE_NORMAL            = 0
+local CAST_TYPE_NON_GCD           = 1
+local CAST_TYPE_ON_SWING          = 2
+local CAST_TYPE_CHANNEL           = 3
+local CAST_TYPE_TARGETING         = 4
+local CAST_TYPE_TARGETING_NON_GCD = 5
+
+local CAST_TYPE_NAMES = {
+	[0] = "Normal",
+	[1] = "NonGCD",
+	[2] = "OnSwing",
+	[3] = "Channel",
+	[4] = "Targeting",
+	[5] = "TargetingNonGCD",
+}
+
+function GetCastTypeName(castType)
+	return CAST_TYPE_NAMES[castType] or "Unknown"
+end
+
+local function onSpellCastEvent(success, spellId, castType, targetGuid, itemId)
+	local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+	local castTypeName = GetCastTypeName(castType)
+	local successText = success == 1 and "OK" or "FAILED"
+	local itemText = itemId ~= 0 and (" | Item: " .. tostring(itemId)) or ""
+	print(string.format(
+		"SPELL_CAST_EVENT: [%s] %s (id:%d) | Type: %s | Target: %s%s",
+		successText, tostring(spellName), spellId, castTypeName, tostring(targetGuid), itemText
+	))
+end
+
+--Nampower:RegisterEvent("SPELL_CAST_EVENT", onSpellCastEvent)

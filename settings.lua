@@ -146,6 +146,14 @@ function Nampower:SavePerCharacterSettings()
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
+
+	if Nampower.cmdtable.args.chat_bubbles then
+		for settingKey, settingData in pairs(Nampower.cmdtable.args.chat_bubbles.args) do
+			if settingData.get and settingData.set then
+				settingData.set(settingData.get())
+			end
+		end
+	end
 end
 
 function Nampower:ApplySavedSettings()
@@ -191,6 +199,14 @@ function Nampower:ApplySavedSettings()
 		-- only apply settings that are prefixed with NP_
 		if string.find(settingKey, "NP_") == 1 then
 			if Nampower.db.profile[settingKey]~= nil then
+				settingData.set(Nampower.db.profile[settingKey])
+			end
+		end
+	end
+
+	if Nampower.cmdtable.args.chat_bubbles then
+		for settingKey, settingData in pairs(Nampower.cmdtable.args.chat_bubbles.args) do
+			if Nampower.db.profile[settingKey]~= nil and settingData.set then
 				settingData.set(Nampower.db.profile[settingKey])
 			end
 		end
@@ -493,6 +509,14 @@ Nampower.cmdtable = {
 			name = L["QOL Options"],
 			desc = L["Quality of life options to prevent common issues"],
 			order = 59,
+			args = {
+			},
+		},
+		chat_bubbles = {
+			type = "group",
+			name = L["Chat Bubbles"],
+			desc = L["Chat bubble options"],
+			order = 120,
 			args = {
 			},
 		},
@@ -1092,6 +1116,118 @@ if Nampower:HasMinimumVersion(3, 1, 0) then
 			end
 		end,
 	}
+end
+
+if Nampower:HasMinimumVersion(3, 3, 0) then
+	Nampower.cmdtable.args.chat_bubbles.args.ChatBubbles = {
+		type = "toggle",
+		name = L["Chat Bubbles (Say/Yell)"],
+		desc = L["Whether to enable chat bubbles for /say and /yell messages."],
+		order = 5,
+		get = function()
+			return GetCVar("ChatBubbles") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.ChatBubbles = v
+			if v == true then
+				SetCVar("ChatBubbles", "1")
+			else
+				SetCVar("ChatBubbles", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.chat_bubbles.args.ChatBubblesParty = {
+		type = "toggle",
+		name = L["Chat Bubbles (Party)"],
+		desc = L["Whether to enable chat bubbles for /party messages."],
+		order = 10,
+		get = function()
+			return GetCVar("ChatBubblesParty") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.ChatBubblesParty = v
+			if v == true then
+				SetCVar("ChatBubblesParty", "1")
+			else
+				SetCVar("ChatBubblesParty", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.chat_bubbles.args.NP_ChatBubblesWhisper = {
+		type = "toggle",
+		name = L["Chat Bubbles (Whisper)"],
+		desc = L["Whether to enable chat bubbles for /whisper messages."],
+		order = 15,
+		get = function()
+			return GetCVar("NP_ChatBubblesWhisper") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_ChatBubblesWhisper = v
+			if v == true then
+				SetCVar("NP_ChatBubblesWhisper", "1")
+			else
+				SetCVar("NP_ChatBubblesWhisper", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.chat_bubbles.args.NP_ChatBubblesRaid = {
+		type = "toggle",
+		name = L["Chat Bubbles (Raid)"],
+		desc = L["Whether to enable chat bubbles for /raid messages."],
+		order = 20,
+		get = function()
+			return GetCVar("NP_ChatBubblesRaid") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_ChatBubblesRaid = v
+			if v == true then
+				SetCVar("NP_ChatBubblesRaid", "1")
+			else
+				SetCVar("NP_ChatBubblesRaid", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.chat_bubbles.args.NP_ChatBubblesBattleground = {
+		type = "toggle",
+		name = L["Chat Bubbles (Battleground)"],
+		desc = L["Whether to enable chat bubbles for battleground messages."],
+		order = 25,
+		get = function()
+			return GetCVar("NP_ChatBubblesBattleground") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_ChatBubblesBattleground = v
+			if v == true then
+				SetCVar("NP_ChatBubblesBattleground", "1")
+			else
+				SetCVar("NP_ChatBubblesBattleground", "0")
+			end
+		end,
+	}
+
+	Nampower.cmdtable.args.chat_bubbles.args.NP_ChatBubbleDistance = {
+		type = "range",
+		name = L["Chat Bubble Distance"],
+		desc = L["The distance in yards to show chat bubbles"],
+		order = 30,
+		min = 5,
+		max = 100,
+		step = 1,
+		get = function()
+			local value = tonumber(GetCVar("NP_ChatBubbleDistance")) or 0
+			return math.floor(value + 0.5)
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_ChatBubbleDistance = v
+			SetCVar("NP_ChatBubbleDistance", v)
+		end,
+	}
+else
+	Nampower.cmdtable.args.chat_bubbles = nil
 end
 
 local deuce = Nampower:NewModule("Nampower Options Menu")

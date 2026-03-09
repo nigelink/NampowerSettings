@@ -812,3 +812,107 @@ local function onSpellCastEvent(success, spellId, castType, targetGuid, itemId)
 end
 
 --Nampower:RegisterEvent("SPELL_CAST_EVENT", onSpellCastEvent)
+
+-- UNIT_AURA_GUID - fires when a unit's aura state changes (GUID variant)
+-- All GUID events share the same parameter format:
+--   guid        (string) - unit guid like "0xF5300000000000A5"
+--   isPlayer    (int)    - 1 if the unit is the active player, 0 otherwise
+--   isTarget    (int)    - 1 if the unit is the current locked target, 0 otherwise
+--   isMouseover (int)    - 1 if the unit is the current mouseover, 0 otherwise
+--   isPet       (int)    - 1 if the unit is the active player's pet, 0 otherwise
+--   partyIndex  (int)    - party slot (1-4) if the unit is a party member, 0 otherwise
+--   raidIndex   (int)    - raid slot (1-40) if the unit is a raid member, 0 otherwise
+local function onUnitGuid(guid, isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex)
+  isPlayer = isPlayer or 0
+  isTarget = isTarget or 0
+  isMouseover = isMouseover or 0
+  isPet = isPet or 0
+  partyIndex = partyIndex or 0
+  raidIndex = raidIndex or 0
+  print(string.format(
+      "%s: %s | isPlayer:%d isTarget:%d isMouseover:%d isPet:%d party:%d raid:%d",
+      "UNIT_AURA_GUID", tostring(UnitName(guid) or guid), isPlayer, isTarget, isMouseover, isPet, partyIndex, raidIndex
+  ))
+end
+
+--Nampower:RegisterEvent("UNIT_AURA_GUID", onUnitGuid)
+
+if not Nampower:HasMinimumVersion(3, 4, 0) then
+  return
+end
+
+-- ENVIRONMENTAL_DMG_SELF / ENVIRONMENTAL_DMG_OTHER
+-- Parameters:
+--   unitGuid (string) - guid of the unit that took damage
+--   dmgType  (int)    - environmental damage type
+--   damage   (int)    - amount of damage taken
+--   absorb   (int)    - amount of damage absorbed
+--   resist   (int)    - amount of damage resisted
+local ENV_DMG_NAMES = {
+  [0] = "Exhausted",
+  [1] = "Drowning",
+  [2] = "Fall",
+  [3] = "Lava",
+  [4] = "Slime",
+  [5] = "Fire",
+  [6] = "FallToVoid",
+}
+
+local function onEnvironmentalDmg(unitGuid, dmgType, damage, absorb, resist)
+  dmgType = dmgType or -1
+  damage = damage or 0
+  absorb = absorb or 0
+  resist = resist or 0
+  print(string.format(
+      "ENVIRONMENTAL_DMG: %s took %d %s damage (absorbed:%d resisted:%d)",
+      tostring(unitGuid), damage, ENV_DMG_NAMES[dmgType] or "Unknown", absorb, resist
+  ))
+end
+
+--Nampower:RegisterEvent("ENVIRONMENTAL_DMG_SELF", onEnvironmentalDmg)
+--Nampower:RegisterEvent("ENVIRONMENTAL_DMG_OTHER", onEnvironmentalDmg)
+
+-- DAMAGE_SHIELD_SELF / DAMAGE_SHIELD_OTHER
+-- Parameters:
+--   unitGuid    (string) - guid of shield owner
+--   targetGuid  (string) - guid of attacker taking reflected damage
+--   damage      (int)    - amount of shield damage dealt
+--   spellSchool (int)    - school of shield damage
+local SCHOOL_NAMES = {
+  [0] = "Physical",
+  [1] = "Holy",
+  [2] = "Fire",
+  [3] = "Nature",
+  [4] = "Frost",
+  [5] = "Shadow",
+  [6] = "Arcane",
+}
+
+local function onDamageShield(unitGuid, targetGuid, damage, spellSchool)
+  damage = damage or 0
+  spellSchool = spellSchool or -1
+  print(string.format(
+      "DAMAGE_SHIELD: %s dealt %d %s damage to %s",
+      tostring(unitGuid), damage, SCHOOL_NAMES[spellSchool] or "Unknown", tostring(targetGuid)
+  ))
+end
+
+--Nampower:RegisterEvent("DAMAGE_SHIELD_SELF", onDamageShield)
+--Nampower:RegisterEvent("DAMAGE_SHIELD_OTHER", onDamageShield)
+
+-- SPELL_DISPEL_BY_SELF / SPELL_DISPEL_BY_OTHER
+-- Parameters:
+--   casterGuid (string) - guid of dispel caster
+--   targetGuid (string) - guid of dispelled unit
+--   spellId    (int)    - dispelled spell id
+local function onSpellDispel(casterGuid, targetGuid, spellId)
+  spellId = spellId or 0
+  local spellName = GetSpellRecField and GetSpellRecField(spellId, "name") or spellId
+  print(string.format(
+      "SPELL_DISPEL_BY: %s dispelled %s (id:%d) from %s",
+      tostring(casterGuid), tostring(spellName), spellId, tostring(targetGuid)
+  ))
+end
+
+--Nampower:RegisterEvent("SPELL_DISPEL_BY_SELF", onSpellDispel)
+--Nampower:RegisterEvent("SPELL_DISPEL_BY_OTHER", onSpellDispel)

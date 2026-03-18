@@ -18,6 +18,30 @@ Nampower:RegisterDefaults("profile", {
 })
 Nampower.frame = CreateFrame("Frame", "Nampower", UIParent)
 
+local DISPLAY_ONLY_SETTINGS = {
+	NP_EnableAuraCastEvents = true,
+	NP_EnableAutoAttackEvents = true,
+	NP_EnableSpellStartEvents = true,
+	NP_EnableSpellGoEvents = true,
+	NP_EnableSpellHealEvents = true,
+	NP_EnableSpellEnergizeEvents = true,
+	NP_EnableUnitEventsPet = true,
+	NP_EnableUnitEventsParty = true,
+	NP_EnableUnitEventsRaid = true,
+	NP_EnableUnitEventsMouseover = true,
+	NP_EnableUnitEventsGuid = true,
+}
+
+local function isProfileManagedSetting(settingKey)
+	return string.find(settingKey, "NP_") == 1 and not DISPLAY_ONLY_SETTINGS[settingKey]
+end
+
+local function clearDisplayOnlyProfileSettings()
+	for settingKey in pairs(DISPLAY_ONLY_SETTINGS) do
+		Nampower.db.profile[settingKey] = nil
+	end
+end
+
 function Nampower:HasMinimumVersion(major, minor, patch)
 	if GetNampowerVersion then
 		local installedMajor, installedMinor, installedPatch = GetNampowerVersion()
@@ -116,33 +140,33 @@ end
 -- used when turning on per character settings
 function Nampower:SavePerCharacterSettings()
 	for settingKey, settingData in pairs(Nampower.cmdtable.args) do
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.queue_windows.args) do
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args) do
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
 
 	if Nampower.cmdtable.args.advanced_options.args.unit_events then
 		for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args.unit_events.args) do
-			if string.find(settingKey, "NP_") == 1 then
+			if isProfileManagedSetting(settingKey) then
 				settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 			end
 		end
 	end
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.qol_options.args) do
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			settingData.set(settingData.get()) -- trigger the set function for each setting with the current value
 		end
 	end
@@ -159,7 +183,7 @@ end
 function Nampower:ApplySavedSettings()
 	for settingKey, settingData in pairs(Nampower.cmdtable.args) do
 		-- only apply settings that are prefixed with NP_
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			if Nampower.db.profile[settingKey]~= nil then
 				settingData.set(Nampower.db.profile[settingKey])
 			end
@@ -168,7 +192,7 @@ function Nampower:ApplySavedSettings()
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.queue_windows.args) do
 		-- only apply settings that are prefixed with NP_
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			if Nampower.db.profile[settingKey]~= nil then
 				settingData.set(Nampower.db.profile[settingKey])
 			end
@@ -177,7 +201,7 @@ function Nampower:ApplySavedSettings()
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args) do
 		-- only apply settings that are prefixed with NP_
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			if Nampower.db.profile[settingKey]~= nil then
 				settingData.set(Nampower.db.profile[settingKey])
 			end
@@ -187,7 +211,7 @@ function Nampower:ApplySavedSettings()
 	if Nampower.cmdtable.args.advanced_options.args.unit_events then
 		for settingKey, settingData in pairs(Nampower.cmdtable.args.advanced_options.args.unit_events.args) do
 			-- only apply settings that are prefixed with NP_
-			if string.find(settingKey, "NP_") == 1 then
+			if isProfileManagedSetting(settingKey) then
 				if Nampower.db.profile[settingKey]~= nil then
 					settingData.set(Nampower.db.profile[settingKey])
 				end
@@ -197,7 +221,7 @@ function Nampower:ApplySavedSettings()
 
 	for settingKey, settingData in pairs(Nampower.cmdtable.args.qol_options.args) do
 		-- only apply settings that are prefixed with NP_
-		if string.find(settingKey, "NP_") == 1 then
+		if isProfileManagedSetting(settingKey) then
 			if Nampower.db.profile[settingKey]~= nil then
 				settingData.set(Nampower.db.profile[settingKey])
 			end
@@ -214,6 +238,8 @@ function Nampower:ApplySavedSettings()
 end
 
 function Nampower:OnEnable()
+	clearDisplayOnlyProfileSettings()
+
 	Nampower.queued_spell:EnableMouse(Nampower.db.profile.queued_spell_enable_mouse)
 
 	-- set scale
@@ -662,7 +688,15 @@ Nampower.cmdtable = {
 						Nampower.db.profile.NP_ChannelLatencyReductionPercentage = v
 						SetCVar("NP_ChannelLatencyReductionPercentage", v)
 					end,
-				}
+				},
+				spell_events = {
+					type = "group",
+					name = L["Spell Events"],
+					desc = L["Controls optional spell and combat event CVars."],
+					order = 150,
+					args = {
+					},
+				},
 			},
 		},
 		spacerc = {
@@ -870,7 +904,7 @@ if Nampower:HasMinimumVersion(2, 20, 0) then
 		end,
 	}
 
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableAuraCastEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableAuraCastEvents = {
 		type = "toggle",
 		name = L["Enable Aura Cast Events"],
 		desc = L["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."],
@@ -879,7 +913,6 @@ if Nampower:HasMinimumVersion(2, 20, 0) then
 			return GetCVar("NP_EnableAuraCastEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableAuraCastEvents = v
 			if v == true then
 				SetCVar("NP_EnableAuraCastEvents", "1")
 			else
@@ -890,7 +923,7 @@ if Nampower:HasMinimumVersion(2, 20, 0) then
 end
 
 if Nampower:HasMinimumVersion(2, 24, 0) then
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableAutoAttackEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableAutoAttackEvents = {
 		type = "toggle",
 		name = L["Enable Auto Attack Events"],
 		desc = L["Whether to enable AUTO_ATTACK_SELF and AUTO_ATTACK_OTHER events."],
@@ -899,7 +932,6 @@ if Nampower:HasMinimumVersion(2, 24, 0) then
 			return GetCVar("NP_EnableAutoAttackEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableAutoAttackEvents = v
 			if v == true then
 				SetCVar("NP_EnableAutoAttackEvents", "1")
 			else
@@ -910,7 +942,7 @@ if Nampower:HasMinimumVersion(2, 24, 0) then
 end
 
 if Nampower:HasMinimumVersion(2, 25, 0) then
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellStartEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableSpellStartEvents = {
 		type = "toggle",
 		name = L["Enable Spell Start Events"],
 		desc = L["Whether to enable SPELL_START_SELF and SPELL_START_OTHER events."],
@@ -919,7 +951,6 @@ if Nampower:HasMinimumVersion(2, 25, 0) then
 			return GetCVar("NP_EnableSpellStartEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableSpellStartEvents = v
 			if v == true then
 				SetCVar("NP_EnableSpellStartEvents", "1")
 			else
@@ -928,7 +959,7 @@ if Nampower:HasMinimumVersion(2, 25, 0) then
 		end,
 	}
 
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellGoEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableSpellGoEvents = {
 		type = "toggle",
 		name = L["Enable Spell Go Events"],
 		desc = L["Whether to enable SPELL_GO_SELF and SPELL_GO_OTHER events."],
@@ -937,7 +968,6 @@ if Nampower:HasMinimumVersion(2, 25, 0) then
 			return GetCVar("NP_EnableSpellGoEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableSpellGoEvents = v
 			if v == true then
 				SetCVar("NP_EnableSpellGoEvents", "1")
 			else
@@ -948,7 +978,7 @@ if Nampower:HasMinimumVersion(2, 25, 0) then
 end
 
 if Nampower:HasMinimumVersion(2, 26, 0) then
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellHealEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableSpellHealEvents = {
 		type = "toggle",
 		name = L["Enable Spell Heal Events"],
 		desc = L["Whether to enable SPELL_HEAL_BY_SELF, SPELL_HEAL_BY_OTHER, and SPELL_HEAL_ON_SELF events."],
@@ -957,7 +987,6 @@ if Nampower:HasMinimumVersion(2, 26, 0) then
 			return GetCVar("NP_EnableSpellHealEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableSpellHealEvents = v
 			if v == true then
 				SetCVar("NP_EnableSpellHealEvents", "1")
 			else
@@ -966,7 +995,7 @@ if Nampower:HasMinimumVersion(2, 26, 0) then
 		end,
 	}
 
-	Nampower.cmdtable.args.advanced_options.args.NP_EnableSpellEnergizeEvents = {
+	Nampower.cmdtable.args.advanced_options.args.spell_events.args.NP_EnableSpellEnergizeEvents = {
 		type = "toggle",
 		name = L["Enable Spell Energize Events"],
 		desc = L["Whether to enable SPELL_ENERGIZE_BY_SELF, SPELL_ENERGIZE_BY_OTHER, and SPELL_ENERGIZE_ON_SELF events."],
@@ -975,7 +1004,6 @@ if Nampower:HasMinimumVersion(2, 26, 0) then
 			return GetCVar("NP_EnableSpellEnergizeEvents") == "1"
 		end,
 		set = function(v)
-			Nampower.db.profile.NP_EnableSpellEnergizeEvents = v
 			if v == true then
 				SetCVar("NP_EnableSpellEnergizeEvents", "1")
 			else
@@ -1001,7 +1029,6 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 					return GetCVar("NP_EnableUnitEventsPet") == "1"
 				end,
 				set = function(v)
-					Nampower.db.profile.NP_EnableUnitEventsPet = v
 					if v == true then
 						SetCVar("NP_EnableUnitEventsPet", "1")
 					else
@@ -1018,7 +1045,6 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 					return GetCVar("NP_EnableUnitEventsParty") == "1"
 				end,
 				set = function(v)
-					Nampower.db.profile.NP_EnableUnitEventsParty = v
 					if v == true then
 						SetCVar("NP_EnableUnitEventsParty", "1")
 					else
@@ -1035,7 +1061,6 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 					return GetCVar("NP_EnableUnitEventsRaid") == "1"
 				end,
 				set = function(v)
-					Nampower.db.profile.NP_EnableUnitEventsRaid = v
 					if v == true then
 						SetCVar("NP_EnableUnitEventsRaid", "1")
 					else
@@ -1052,7 +1077,6 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 					return GetCVar("NP_EnableUnitEventsMouseover") == "1"
 				end,
 				set = function(v)
-					Nampower.db.profile.NP_EnableUnitEventsMouseover = v
 					if v == true then
 						SetCVar("NP_EnableUnitEventsMouseover", "1")
 					else
@@ -1069,7 +1093,6 @@ if Nampower:HasMinimumVersion(2, 39, 0) then
 					return GetCVar("NP_EnableUnitEventsGuid") == "1"
 				end,
 				set = function(v)
-					Nampower.db.profile.NP_EnableUnitEventsGuid = v
 					if v == true then
 						SetCVar("NP_EnableUnitEventsGuid", "1")
 					else

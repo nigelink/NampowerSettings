@@ -69,6 +69,8 @@ L:RegisterTranslations("enUS", function()
 
         ["Advanced options"] = true,
         ["Collection of various advanced options"] = true,
+        ["Spell Events"] = true,
+        ["Controls optional spell and combat event CVars."] = true,
 
         ["Double Cast to End Channel Early"] = true,
         ["Whether to allow double casting a spell within 350ms to end channeling on the next tick.  Takes into account your ChannelLatencyReductionPercentage."] = true,
@@ -249,6 +251,8 @@ L:RegisterTranslations("zhCN", function()
 
         ["Advanced options"] = "高级选项",
         ["Collection of various advanced options"] = "各类高级选项集合",
+        ["Spell Events"] = "法术事件",
+        ["Controls optional spell and combat event CVars."] = "控制可选的法术和战斗事件 CVar。",
 
         ["Double Cast to End Channel Early"] = "双重施法提前结束引导",
         ["Whether to allow double casting a spell within 350ms to end channeling on the next tick.  Takes into account your ChannelLatencyReductionPercentage."] = "是否允许350毫秒内双重施法以在下一个伤害周期提前结束引导。受引导延迟削减比例影响。",

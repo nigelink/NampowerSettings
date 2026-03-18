@@ -96,6 +96,18 @@ function PrintBuffs(unit)
   end
 end
 
+function PrintAuras(unit)
+  local auras = GetUnitField(unit, "aura")
+  local applications = GetUnitField(unit, "auraApplications")
+  if not auras then return end
+  for i, auraId in ipairs(auras) do
+    local stacks = (applications[i] or 0) + 1
+    if auraId > 0 then
+      print(tostring(i) .. " " .. tostring(auraId) .. " x" .. tostring(stacks))
+    end
+  end
+end
+
 function PrintUnitData(unit)
 	local data = GetUnitData(unit)
 	if data then
@@ -916,3 +928,22 @@ end
 
 --Nampower:RegisterEvent("SPELL_DISPEL_BY_SELF", onSpellDispel)
 --Nampower:RegisterEvent("SPELL_DISPEL_BY_OTHER", onSpellDispel)
+
+-- PrintSpellRange(rangeIndex)
+-- Prints the SpellRange DBC record for the given index using GetSpellRangeData.
+-- GetSpellRangeData returns: minRange, maxRange, flags, name
+function PrintSpellRange(rangeIndex)
+  if not GetSpellRangeData then
+    print("GetSpellRangeData is not available")
+    return
+  end
+  local minRange, maxRange, flags, name = GetSpellRangeData(rangeIndex)
+  if minRange == nil then
+    print(string.format("PrintSpellRange(%d): no record found", rangeIndex))
+    return
+  end
+  print(string.format(
+      "SpellRange[%d]: name=%q  min=%.2f  max=%.2f  flags=0x%08X",
+      rangeIndex, tostring(name), minRange, maxRange, flags
+  ))
+end

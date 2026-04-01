@@ -138,6 +138,9 @@ L:RegisterTranslations("enUS", function()
         ["Prevent Mounting When Buff Capped"] = true,
         ["Whether to prevent mounting when you have 32 buffs (buff capped) and are not already mounted. This prevents the issue where you mount but cannot dismount because the mount aura fails to apply due to the buff cap. When blocked, displays an error message."] = true,
 
+        ["Enable Enhanced Tooltips"] = true,
+        ["Whether to enable nampower's tooltip additions such as spell proc chance, ICD, and item cooldown text."] = true,
+
         ["Enable Aura Cast Events"] = true,
         ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = true,
 
@@ -319,6 +322,9 @@ L:RegisterTranslations("zhCN", function()
 
         ["Prevent Mounting When Buff Capped"] = "Buff满时阻止上坐骑",
         ["Whether to prevent mounting when you have 32 buffs (buff capped) and are not already mounted. This prevents the issue where you mount but cannot dismount because the mount aura fails to apply due to the buff cap. When blocked, displays an error message."] = "当已有32个增益（Buff已满）且未在坐骑状态时，是否阻止上坐骑，以避免坐骑光环因Buff上限无法施加导致无法下马的问题。被阻止时会显示错误提示。",
+
+        ["Enable Enhanced Tooltips"] = "启用增强工具提示",
+        ["Whether to enable nampower's tooltip additions such as spell proc chance, ICD, and item cooldown text."] = "是否启用 nampower 的工具提示增强内容，例如法术触发几率、内置冷却时间（ICD）和物品冷却文本。",
 
         ["Enable Aura Cast Events"] = "启用光环施放事件",
         ["Whether to enable AURA_CAST_ON_SELF and AURA_CAST_ON_OTHER events."] = "是否启用 AURA_CAST_ON_SELF 和 AURA_CAST_ON_OTHER 事件。",

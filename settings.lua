@@ -1139,6 +1139,27 @@ if Nampower:HasMinimumVersion(3, 1, 0) then
 			end
 		end,
 	}
+
+end
+
+if Nampower:HasMinimumVersion(4, 3, 0) then
+	Nampower.cmdtable.args.qol_options.args.NP_EnableEnhancedTooltips = {
+		type = "toggle",
+		name = L["Enable Enhanced Tooltips"],
+		desc = L["Whether to enable nampower's tooltip additions such as spell proc chance, ICD, and item cooldown text."],
+		order = 30,
+		get = function()
+			return GetCVar("NP_EnableEnhancedTooltips") == "1"
+		end,
+		set = function(v)
+			Nampower.db.profile.NP_EnableEnhancedTooltips = v
+			if v == true then
+				SetCVar("NP_EnableEnhancedTooltips", "1")
+			else
+				SetCVar("NP_EnableEnhancedTooltips", "0")
+			end
+		end,
+	}
 end
 
 if Nampower:HasMinimumVersion(3, 3, 0) then

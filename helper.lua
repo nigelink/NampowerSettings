@@ -92,7 +92,7 @@ function PrintBuffs(unit)
     if not texture then
       break
     end
-    print(tostring(i) .. " " .. tostring(spellId))
+    print(tostring(i) .. " " .. texture .. " " .. tostring(spellId))
   end
 end
 
@@ -101,7 +101,10 @@ function PrintAuras(unit)
   local applications = GetUnitField(unit, "auraApplications")
   if not auras then return end
   for i, auraId in ipairs(auras) do
-    local stacks = (applications[i] or 0) + 1
+    local stacks = -1
+    if applications then
+      local stacks = (applications[i] or 0) + 1
+    end
     if auraId > 0 then
       print(tostring(i) .. " " .. tostring(auraId) .. " x" .. tostring(stacks))
     end
